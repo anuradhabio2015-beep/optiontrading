@@ -99,7 +99,10 @@ st.markdown(f"## 📈 {symbol} — {selection.get('strategy')} ({selection.get('
 # --- Fetch Data ---
 oc = fetch_option_chain(symbol)
 indices = fetch_indices_nse()
-spot = indices.get(symbol)
+spot = indices.get(symbol.upper())
+if not spot:
+    from modules.data_fetcher import fetch_spot_price
+    spot = fetch_spot_price(symbol)
 vix = indices.get("INDIA VIX")
 
 # --- Compute Metrics ---
