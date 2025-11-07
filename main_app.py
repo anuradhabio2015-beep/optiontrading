@@ -11,49 +11,77 @@ from modules.backtester import run_backtest_for_symbol
 from modules.order_executor import place_order_groww, place_order_zerodha
 from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 
-st.set_page_config(layout="wide", page_title="AI Options Selling — Gemini Pro")
 
-st.title("🤖 Smart Option Selling")
+# --- Streamlit setup ---
+st.set_page_config(layout="wide", page_title="Smart Option Selling — Gemini Pro")
 
-# Sidebar configuration
+st.title("🤖 Smart Option Selling Dashboard (Gemini Pro)")
+st.caption("AI-driven short volatility strategies with NSE live data, IV ranks, and Greeks.")
+
+# --- Sidebar configuration ---
 with st.sidebar:
     st.header("⚙️ Configuration")
 
-    # Gemini API Key Input
+    # Store persistent state
+    if "filters" not in st.session_state:
+        st.session_state.filters = {}
+
+    # Gemini API Key input
     gemini_key = st.text_input("🔑 Gemini API Key", type="password", placeholder="Paste your Gemini key here")
     if gemini_key:
         os.environ["GEMINI_API_KEY"] = gemini_key
+        st.session_state.filters["gemini_key"] = gemini_key
         st.success("Gemini API Key set ✅")
     else:
         st.warning("Enter your Gemini API Key to enable AI features")
 
-    # Universe dropdown (multi-select)
+    # Universe dropdown
     default_universe = ["BANKNIFTY", "NIFTY", "RELIANCE", "HDFCBANK", "ICICIBANK", "TCS", "TATAMOTORS"]
     universe = st.multiselect("📊 Select Universe", default_universe, default=default_universe[:5])
-    if not universe:
-        st.error("Please select at least one symbol.")
-        st.stop()
+    st.session_state.filters["universe"] = universe
 
     # Strategy dropdown
     strategy_options = ["AI-Auto", "Iron Condor", "Credit Spread", "Calendar Spread"]
     strategy_choice = st.selectbox("🎯 Strategy Focus", strategy_options, index=0)
+    st.session_state.filters["strategy"] = strategy_choice
 
-    # Other parameters
+    # Other params
     capital = st.number_input("💰 Portfolio Capital (₹)", 100000, 10000000, 200000, step=50000)
     risk_pct = st.slider("Risk % per Trade", 0.5, 5.0, 1.5)
     rfr = st.number_input("Risk-Free Rate (annual)", 0.0, 0.2, 0.07, step=0.005, format="%.3f")
     expiry_days = st.slider("Days to expiry (estimate)", 1, 30, 7)
 
+    # Apply filter button
+    if st.button("🔄 Apply Filters"):
+        st.experimental_rerun()
+
 st.markdown("---")
 
-if st.button("🚀 Run AI Selection + Metrics + Backtest"):
-    with st.spinner("Calling Gemini and fetching data..."):
-        # Step 1: AI selection
-        selection = ai_select_stocks_gemini(universe)
-        st.subheader("📈 AI-Selected Symbols")
+# --- Use filter data ---
+filters = st.session_state.get("filters", {})
+selected_symbols = filters.get("universe", [])
+strategy_focus = filters.get("strategy", "AI-Auto")
+
+if not selected_symbols:
+    st.warning("Please select symbols from the sidebar to continue.")
+    st.stop()
+
+# --- Main workflow trigger ---
+if st.button("🚀 Run AI Selection + Analytics + Backtest", key="run_ai"):
+    with st.spinner("Running AI analysis and fetching NSE data..."):
+        # Step 1 — Gemini AI Selection (respect strategy filter)
+        selection = ai_select_stocks_gemini(selected_symbols)
+
+        # Filter by strategy if user specified (non-AI mode)
+        if strategy_focus != "AI-Auto":
+            for item in selection:
+                item["strategy"] = strategy_focus
+                item["rationale"] = f"User-selected focus on {strategy_focus}"
+
+        st.subheader("📈 Selected Symbols and Strategies")
         st.json(selection)
 
-        # Step 2: Per-symbol analytics
+        # Step 2 — Analytics and charts
         for row in selection:
             symbol = row.get("symbol")
             st.header(f"📊 {symbol} — {row.get('strategy')} ({row.get('bias')})")
@@ -63,7 +91,6 @@ if st.button("🚀 Run AI Selection + Metrics + Backtest"):
             spot = indices.get(symbol)
             vix = indices.get("INDIA VIX")
 
-            # Analytics: IV Rank, EM, PCR, Max Pain, Greeks at ATM
             metrics = compute_core_metrics(symbol=symbol, spot=spot, vix=vix, oc=oc, r=rfr, days=expiry_days)
 
             c1, c2, c3 = st.columns(3)
@@ -94,17 +121,17 @@ if st.button("🚀 Run AI Selection + Metrics + Backtest"):
             st.pyplot(plot_iv_rank_history())
             st.pyplot(plot_expected_move_chart(spot, metrics))
 
-            # Strategies
+            # Strategy Generation
             strategies = build_strategies(symbol, oc, capital, risk_pct, metrics, r=rfr, days=expiry_days)
-            st.subheader("🧮 Strategies")
+            st.subheader("🧮 Generated Strategies")
             st.dataframe(pd.DataFrame(strategies))
 
             # Backtest
-            st.subheader("📊 Backtest (Toy)")
+            st.subheader("📊 Backtest (Simulated)")
             bt = run_backtest_for_symbol(symbol, strategies)
             st.dataframe(bt)
 
-            # Orders
+            # Broker buttons (unique keys)
             cA, cB = st.columns(2)
             with cA:
                 if st.button(f"🚀 Send {symbol} to Groww (dry-run)", key=f"groww_{symbol}"):
@@ -113,7 +140,7 @@ if st.button("🚀 Run AI Selection + Metrics + Backtest"):
                 if st.button(f"🚀 Send {symbol} to Zerodha (dry-run)", key=f"zerodha_{symbol}"):
                     st.success(place_order_zerodha(strategies))
 
-        # AI summary
+        # Final AI summary
         st.markdown("### 🧠 AI Market Summary")
         st.write(ai_market_summary_gemini(selection))
 
