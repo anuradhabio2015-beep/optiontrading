@@ -15,7 +15,7 @@ from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 # PAGE CONFIGURATION
 # --------------------------------------------------------------
 st.set_page_config(layout="wide", page_title="Smart Option Trading App")
-st.title("🤖 Smart Option Selling Dashboard — Gemini Pro (Single Symbol)")
+st.title("🤖 Smart Option Trading App")
 
 # --------------------------------------------------------------
 # SIDEBAR CONFIGURATION
