@@ -1,92 +1,87 @@
-import requests
-import json
-import time
-from datetime import datetime
+import requests, json, time, re, os
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0 Safari/537.36",
-    "accept-language": "en,gu;q=0.9,hi;q=0.8",
-    "accept-encoding": "gzip, deflate, br"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/121.0 Safari/537.36",
+    "accept-language": "en-US,en;q=0.9",
 }
 
 NSE_BASE = "https://www.nseindia.com"
 
-def _get_session():
-    """Create a session with valid NSE cookies."""
+def _session():
     s = requests.Session()
     s.headers.update(HEADERS)
     s.get("https://www.nseindia.com", timeout=10)
     return s
 
-
+# -------------------------------------------------------------
+# Index and VIX
+# -------------------------------------------------------------
 def fetch_indices_nse():
-    """Fetch index prices (NIFTY, BANKNIFTY, INDIA VIX) from NSE API."""
     try:
-        s = _get_session()
-        url = f"{NSE_BASE}/api/allIndices"
-        r = s.get(url, timeout=10)
-        r.raise_for_status()
+        s = _session()
+        r = s.get(f"{NSE_BASE}/api/allIndices", timeout=10)
         data = r.json()
         mapping = {}
-        for idx in data.get("data", []):
-            name = idx.get("index", "").upper().replace(" ", "")
-            mapping[name] = float(idx.get("last", 0))
-        # Standardize keys
+        for i in data.get("data", []):
+            name = i.get("index", "").upper().replace(" ", "")
+            mapping[name] = float(i.get("last", 0))
         if "NIFTY50" in mapping:
             mapping["NIFTY"] = mapping["NIFTY50"]
         if "NIFTYBANK" in mapping:
             mapping["BANKNIFTY"] = mapping["NIFTYBANK"]
         if "INDIAVIX" not in mapping:
-            mapping["INDIAVIX"] = fetch_vix_fallback()
+            mapping["INDIAVIX"] = 14.0
         return mapping
     except Exception as e:
         print(f"[WARN] fetch_indices_nse failed: {e}")
-        return {}
+        return {"INDIAVIX": 14.0}
 
-
-def fetch_vix_fallback():
-    """Fallback VIX value from Investing.com (approx)."""
+# -------------------------------------------------------------
+# Spot Price (Stock or Index)
+# -------------------------------------------------------------
+def fetch_spot_price(symbol: str):
     try:
-        r = requests.get("https://priceapi.moneycontrol.com/pricefeed/notapplicable/inidicesindia/inindiaVIX", timeout=10)
-        if r.status_code == 200:
-            return float(r.json().get("data", {}).get("price", 0))
+        s = _session()
+        # For indices
+        if symbol.upper() in ["NIFTY", "BANKNIFTY"]:
+            r = s.get(f"{NSE_BASE}/api/option-chain-indices?symbol={symbol.upper()}", timeout=10)
+            data = r.json()
+            return float(data["records"]["underlyingValue"])
+        # For equities
+        r = s.get(f"{NSE_BASE}/api/quote-equity?symbol={symbol.upper()}", timeout=10)
+        data = r.json()
+        return float(data["priceInfo"]["lastPrice"])
     except Exception as e:
-        print(f"[WARN] fetch_vix_fallback failed: {e}")
-    return 14.0  # safe default
-
-
-def fetch_spot_price(symbol):
-    """Fetch spot price for a stock or index."""
-    s = _get_session()
-    try:
-        url = f"{NSE_BASE}/api/quote-equity?symbol={symbol.upper()}"
-        r = s.get(url, timeout=10)
-        if r.status_code == 200:
-            return float(r.json()["priceInfo"]["lastPrice"])
-    except:
+        print(f"[WARN] fetch_spot_price failed for {symbol}: {e}")
         # TradingView fallback
         try:
             r = requests.get(f"https://in.tradingview.com/symbols/NSE-{symbol}/", timeout=10)
-            import re
             m = re.search(r'"regularMarketPrice":([0-9]+\.[0-9]+)', r.text)
             if m:
                 return float(m.group(1))
-        except Exception as e:
-            print(f"[WARN] Spot fallback failed for {symbol}: {e}")
+        except Exception as ee:
+            print(f"[WARN] TradingView fallback failed: {ee}")
     return None
 
-
-def fetch_option_chain(symbol):
-    """Fetch option chain data for index or equity."""
-    s = _get_session()
-    if symbol.upper() in ["NIFTY", "BANKNIFTY"]:
-        url = f"{NSE_BASE}/api/option-chain-indices?symbol={symbol.upper()}"
-    else:
-        url = f"{NSE_BASE}/api/option-chain-equities?symbol={symbol.upper()}"
+# -------------------------------------------------------------
+# Option Chain (with local fallback)
+# -------------------------------------------------------------
+def fetch_option_chain(symbol: str):
+    s = _session()
     try:
+        url = f"{NSE_BASE}/api/option-chain-indices?symbol={symbol.upper()}"
+        if symbol.upper() not in ["NIFTY", "BANKNIFTY"]:
+            url = f"{NSE_BASE}/api/option-chain-equities?symbol={symbol.upper()}"
         r = s.get(url, timeout=10)
-        r.raise_for_status()
-        return r.json()
+        data = r.json()
+        if "records" in data and "data" in data["records"]:
+            return data
     except Exception as e:
-        print(f"[WARN] Option chain fetch failed for {symbol}: {e}")
-        return {}
+        print(f"[WARN] NSE OC fetch failed for {symbol}: {e}")
+
+    # Fallback to local sample if NSE fails
+    sample_path = os.path.join(os.path.dirname(__file__), "sample_oc.json")
+    if os.path.exists(sample_path):
+        return json.load(open(sample_path))
+    return {"records": {"data": []}}
