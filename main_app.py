@@ -96,7 +96,23 @@ st.dataframe(pd.DataFrame(strategies))
 
 st.subheader("📊 Backtest Results (Detailed)")
 bt = run_detailed_backtest(symbol, strategies)
-st.dataframe(bt)
+
+st.subheader("📊 Backtest Results (Detailed)")
+st.dataframe(bt, use_container_width=True)
+
+st.markdown(f"**Total P/L:** ₹{bt['P/L (₹)'].sum():,.0f} | "
+            f"Avg Return: {bt['Return (%)'].mean():.2f}% | "
+            f"Average POP: {bt['POP (%)'].mean():.1f}%")
+
+# Optional Chart
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots()
+ax.plot(bt["Total Profit (₹)"], marker="o")
+ax.set_title(f"{symbol} Backtest P/L Curve")
+ax.set_xlabel("Trades")
+ax.set_ylabel("Cumulative Profit (₹)")
+st.pyplot(fig)
+
 
 cA, cB = st.columns(2)
 with cA:
