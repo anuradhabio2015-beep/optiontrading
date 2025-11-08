@@ -86,7 +86,7 @@ def try_fetch_data(symbol, retries=3, delay=2):
 
             indices = fetch_indices_nse()
             spot = indices.get(symbol.upper()) or fetch_spot_price(symbol)
-            vix = indices.get("INDIAVIX") or indices.get("INDIA VIX") or 14.0
+            vix = indices.get("INDIAVIX") or indices.get("INDIA VIX")
             oc = fetch_option_chain(symbol)
             metrics = compute_core_metrics(symbol, spot, vix, oc, r=rfr, days=expiry_days)
             pcr = metrics.get("pcr") if metrics else None
@@ -107,6 +107,7 @@ def try_fetch_data(symbol, retries=3, delay=2):
 
     status.error("❌ Failed to fetch Spot, India VIX, or PCR after multiple retries.")
     return None, None, None, None, None
+    st.stop()
 
 
 # --- Run safe fetch ---
