@@ -1,18 +1,19 @@
 import os, json, re
 import google.generativeai as genai
+from google.api_core import exceptions
 
-def _call_gemini(prompt: str) -> str:
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        return None
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel("gemini-pro-latest")
-    # "model_signals": "gemini-flash-latest"
-    # "model_sentiment": "gemini-pro-latest",
-    
-    resp = model.generate_content(prompt)
-    return resp.text
-
+def _call_gemini(prompt):
+    try:
+        model = genai.GenerativeModel("gemini-pro-latest")
+        resp = model.generate_content(prompt)
+        return resp.text
+    except exceptions.ResourceExhausted:
+        return "[AI Error] Gemini API quota exhausted. Try again later or use cached analysis."
+    except exceptions.GoogleAPIError as e:
+        return f"[AI Error] Gemini API unavailable: {str(e)[:120]}"
+    except Exception as e:
+        return f"[AI Error] Unexpected: {str(e)[:120]}"
+        
 def ai_select_stocks_gemini(symbols: list):
     prompt = f"""You are an expert option-seller in Indian markets.
 Given this universe: {', '.join(symbols)},
