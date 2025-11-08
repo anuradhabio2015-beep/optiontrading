@@ -78,35 +78,47 @@ import time
 
 # --- Retry logic for critical market data ---
 def try_fetch_data(symbol, retries=3, delay=2):
+    status = st.empty()  # placeholder for single-line status updates
+
     for attempt in range(retries):
         try:
+            status.info(f"🔄 Attempt {attempt+1}/{retries}: Fetching live market data...")
+
             indices = fetch_indices_nse()
             spot = indices.get(symbol.upper()) or fetch_spot_price(symbol)
             vix = indices.get("INDIAVIX") or indices.get("INDIA VIX") or 14.0
             oc = fetch_option_chain(symbol)
             metrics = compute_core_metrics(symbol, spot, vix, oc, r=rfr, days=expiry_days)
-
-            # Compute PCR only if available
             pcr = metrics.get("pcr") if metrics else None
 
             if spot and vix and pcr:
+                status.success(f"✅ Market data fetched successfully (Spot={spot:.2f}, VIX={vix:.2f}, PCR={round(pcr, 2)})")
                 return spot, vix, pcr, oc, metrics
-            else:
-                st.warning(f"⚠️ Attempt {attempt+1}/{retries} failed: Missing data (Spot={spot}, VIX={vix}, PCR={pcr})")
-                time.sleep(delay)
-        except Exception as e:
-            st.error(f"Attempt {attempt+1}/{retries} failed: {e}")
+
+            status.warning(
+                f"⚠️ Attempt {attempt+1}/{retries} failed: Missing data "
+                f"(Spot={spot}, VIX={vix}, PCR={pcr})"
+            )
             time.sleep(delay)
+
+        except Exception as e:
+            status.error(f"⚠️ Attempt {attempt+1}/{retries} failed: {str(e)[:100]}")
+            time.sleep(delay)
+
+    status.error("❌ Failed to fetch Spot, India VIX, or PCR after multiple retries.")
     return None, None, None, None, None
 
 
 # --- Run safe fetch ---
 spot, vix, pcr, oc, metrics = try_fetch_data(symbol)
 
-# --- Popup & safe stop if data still missing ---
+# --- Stop if still missing ---
 if not spot or not vix or not pcr:
     st.error("❌ Critical data missing: Unable to fetch Spot, India VIX, or PCR (OI). Please retry later.")
+    if st.button("🔁 Retry Fetch Data"):
+        st.rerun()
     st.stop()
+
 
 oc = fetch_option_chain(symbol)
 
