@@ -131,6 +131,24 @@ st.pyplot(plot_iv_rank_history())
 st.pyplot(plot_expected_move_chart(spot, metrics))
 
 strategies = build_strategies(symbol, oc, capital, risk_pct, metrics, r=rfr, days=expiry_days, focus=strategy_focus)
+from modules.ai_trade_levels import ai_trade_levels
+
+st.subheader("🎯 AI Entry / Exit / Stop-Loss Levels")
+
+ai_levels = []
+for strat in strategies:
+    ai_level = ai_trade_levels(
+        symbol,
+        spot,
+        metrics.get("atm_iv_rank", 50),
+        metrics.get("pcr", 1.0),
+        strategy=strat["Strategy"]
+    )
+    ai_levels.append(ai_level)
+
+ai_df = pd.DataFrame(ai_levels)
+st.dataframe(ai_df, use_container_width=True)
+
 st.subheader("🧮 Generated Strategy")
 st.dataframe(pd.DataFrame(strategies))
 
