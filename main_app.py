@@ -21,13 +21,23 @@ st.title("🤖 Smart Option Selling Dashboard — Gemini Pro (Tabs Edition)")
 with st.sidebar:
     st.header("⚙️ Configuration")
 
-    gemini_key = st.text_input("🔑 Gemini API Key", type="password", placeholder="Enter Gemini Key")
+    gemini_key = st.text_input("🔑 Gemini API Key", type="password", placeholder="Enter Gemini Key")    
     if gemini_key:
         os.environ["GEMINI_API_KEY"] = gemini_key
         st.session_state["gemini_key"] = gemini_key
         st.success("Gemini Key Loaded ✅")
     else:
         st.warning("Please enter Gemini API Key")
+
+    st.markdown("### 🏦 Broker Settings")
+    broker = st.radio("Select Broker", ["None", "Zerodha", "Groww"], index=0)
+
+    if broker == "Zerodha":
+      zerodha_api_key = st.text_input("🔑 Zerodha API Key", type="password")
+      zerodha_access_token = st.text_input("🎟️ Zerodha Access Token", type="password")
+    elif broker == "Groww":
+      st.info("Groww integration is simulated (no live API). Orders will be logged as paper trades.")
+
 
     default_universe = ["BANKNIFTY", "NIFTY", "RELIANCE", "HDFCBANK", "ICICIBANK"]
     symbol = st.selectbox("📊 Select Universe (Index or Stock)", options=default_universe, index=0)
