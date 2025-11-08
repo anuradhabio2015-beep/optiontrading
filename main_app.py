@@ -11,8 +11,8 @@ from modules.backtester import run_detailed_backtest
 from modules.order_executor import place_order_groww, place_order_zerodha
 from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 
-st.set_page_config(layout="wide", page_title="Smart Option Selling Dashboard — Gemini Pro Final")
-st.title("🤖 Smart Option Selling Dashboard — Gemini Pro (Final Detailed Version)")
+st.set_page_config(layout="wide", page_title="Smart Trading App")
+st.title("🤖 Smart App for Option Sellingn)")
 
 # Sidebar
 with st.sidebar:
