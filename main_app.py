@@ -63,11 +63,11 @@ if "ai_selection" not in st.session_state:
     st.stop()
 
 selection = st.session_state["ai_selection"][0]
-indices = fetch_indices_nse()
-spot = indices.get(symbol.upper()) or fetch_spot_price(symbol)
-vix = indices.get("INDIAVIX", 14.0)
-oc = fetch_option_chain(symbol)
-metrics = compute_core_metrics(symbol, spot, vix, oc, r=rfr, days=expiry_days)
+# indices = fetch_indices_nse()
+# spot = indices.get(symbol.upper()) or fetch_spot_price(symbol)
+# vix = indices.get("INDIAVIX", 14.0)
+# oc = fetch_option_chain(symbol)
+# metrics = compute_core_metrics(symbol, spot, vix, oc, r=rfr, days=expiry_days)
 
 import time
 
