@@ -1,183 +1,103 @@
+# ===============================================
+# SMART OPTION DASHBOARD — TABBED UI LAYOUT
+# ===============================================
 import streamlit as st
 import pandas as pd
-import os
-
-from modules.ai_selector_gemini import ai_select_stocks_gemini
-from modules.ai_explainer_gemini import ai_market_summary_gemini
-from modules.data_fetcher import fetch_option_chain, fetch_indices_nse, fetch_spot_price
-from modules.analytics import compute_core_metrics
-from modules.strategy_engine import build_strategies
+from modules.ai_trade_levels import ai_trade_levels
+from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 from modules.backtester import run_detailed_backtest
 from modules.order_executor import place_order_groww, place_order_zerodha
-from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 
-st.set_page_config(layout="wide", page_title="Smart Trading App")
-st.title("🤖 Smart App for Option Selling")
+# Tabs (like Groww)
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    "📈 Market Overview",
+    "💡 AI Strategy",
+    "📊 Backtest",
+    "📉 IV / Expected Move Charts",
+    "⚙️ Orders & Summary"
+])
 
-# Sidebar
-with st.sidebar:
-    st.header("⚙️ Configuration")
+# ---------------------------------------------
+# TAB 1 — MARKET OVERVIEW
+# ---------------------------------------------
+with tab1:
+    st.header("📈 Market Overview")
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Spot", f"{spot or '-'}")
+    c2.metric("India VIX", f"{round(vix, 2) if vix else '-'}")
+    c3.metric("PCR (OI)", f"{round(metrics.get('pcr'), 2) if metrics.get('pcr') else '-'}")
 
-    gemini_key = st.text_input("🔑 Gemini API Key", type="password", placeholder="Paste your Gemini key here")
-    if gemini_key:
-        os.environ["GEMINI_API_KEY"] = gemini_key
-        st.session_state["gemini_key"] = gemini_key
-        st.success("Gemini API Key set ✅")
-    else:
-        st.warning("Enter Gemini API Key to enable AI selection")
+    st.write("**IV Rank / Percentile:**", 
+             f"{metrics.get('atm_iv_rank')} / {metrics.get('atm_iv_percentile')}%")
+    st.write("**Expected Move (1D ±):**", 
+             f"{metrics.get('expected_move_1d', (0, 0))[0]:,.0f} pts | (3D ±): {metrics.get('expected_move_3d', (0, 0))[0]:,.0f} pts")
+    st.success("✅ Data successfully fetched and verified.")
 
-    default_universe = ["BANKNIFTY", "NIFTY", "RELIANCE", "HDFCBANK", "ICICIBANK"]
-    selected_symbol = st.selectbox("📊 Select Index/Stock", options=default_universe, index=0)
+# ---------------------------------------------
+# TAB 2 — AI STRATEGY LEVELS
+# ---------------------------------------------
+with tab2:
+    st.header("💡 AI Entry / Exit / Stop-Loss Recommendations")
+    strategies = build_strategies(symbol, oc, capital, risk_pct, metrics, r=rfr, days=expiry_days, focus=strategy_focus)
 
-    strategy_focus = st.selectbox(
-        "🎯 Strategy Focus",
-        ["AI-Auto", "Iron Condor", "Credit Spread", "Calendar Spread"],
-        index=0
-    )
+    ai_levels = []
+    for strat in strategies:
+        ai_level = ai_trade_levels(
+            symbol,
+            spot,
+            metrics.get("atm_iv_rank", 50),
+            metrics.get("pcr", 1.0),
+            strategy=strat["Strategy"]
+        )
+        ai_levels.append(ai_level)
 
-    capital = st.number_input("💰 Portfolio Capital (₹)", 100000, 10000000, 200000, step=50000)
-    risk_pct = st.slider("Risk % per Trade", 0.5, 5.0, 1.5)
-    rfr = st.number_input("Risk-Free Rate (annual)", 0.0, 0.2, 0.07, step=0.005, format="%.3f")
-    expiry_days = st.slider("Days to expiry (estimate)", 1, 45, 15)
+    ai_df = pd.DataFrame(ai_levels)
+    st.dataframe(ai_df, use_container_width=True)
+    st.caption("These levels are AI-estimated based on IV Rank, PCR, and live option data trends.")
 
-    st.session_state.update({
-        "symbol": selected_symbol,
-        "strategy_focus": strategy_focus,
-        "capital": capital,
-        "risk_pct": risk_pct,
-        "rfr": rfr,
-        "expiry_days": expiry_days
-    })
+# ---------------------------------------------
+# TAB 3 — BACKTEST
+# ---------------------------------------------
+with tab3:
+    st.header("📊 Backtest Simulation (AI-Driven)")
+    bt = run_detailed_backtest(symbol, strategies)
+    st.dataframe(bt, use_container_width=True)
 
-    st.markdown("---")
-    run_ai = st.button("🚀 Run Analysis", use_container_width=True)
+    st.markdown(f"**Total P/L:** ₹{bt['P/L (₹)'].sum():,.0f} | "
+                f"Avg Return: {bt['Return (%)'].mean():.2f}% | "
+                f"Avg POP: {bt['POP (%)'].mean():.1f}%")
 
-if not gemini_key:
-    st.stop()
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots()
+    ax.plot(bt["Total Profit (₹)"], marker="o", color="#00b386")
+    ax.set_title(f"{symbol} Cumulative Profit Curve", fontsize=11, weight="bold")
+    ax.set_xlabel("Trades")
+    ax.set_ylabel("Cumulative Profit (₹)")
+    st.pyplot(fig)
 
-symbol = st.session_state["symbol"]
-strategy_focus = st.session_state["strategy_focus"]
+# ---------------------------------------------
+# TAB 4 — IV HISTORY / EXPECTED MOVE CHARTS
+# ---------------------------------------------
+with tab4:
+    st.header("📉 Volatility & Expected Move Analysis")
+    st.pyplot(plot_iv_rank_history())
+    st.pyplot(plot_expected_move_chart(spot, metrics))
+    st.caption("Charts styled like Groww: minimal, clear, and data-rich.")
 
-if run_ai:
-    with st.spinner(f"🤖 Running Gemini for {symbol}..."):
-        st.session_state["ai_selection"] = ai_select_stocks_gemini([symbol])
-        st.session_state["ai_summary"] = ai_market_summary_gemini(st.session_state["ai_selection"])
-elif "ai_selection" not in st.session_state:
-    st.info("👆 Click **Run Analysis** to start Gemini AI processing.")
+# ---------------------------------------------
+# TAB 5 — ORDERS & SUMMARY
+# ---------------------------------------------
+with tab5:
+    st.header("⚙️ Orders & Market Summary")
 
+    cA, cB = st.columns(2)
+    with cA:
+        if st.button(f"🚀 Send {symbol} Orders to Groww (Dry-Run)", key=f"groww_{symbol}"):
+            st.success(place_order_groww(strategies))
+    with cB:
+        if st.button(f"🚀 Send {symbol} Orders to Zerodha (Dry-Run)", key=f"zerodha_{symbol}"):
+            st.success(place_order_zerodha(strategies))
 
-if "ai_selection" not in st.session_state:
-    st.info("👆 Click **Run Analysis** to generate Gemini AI selection and strategies.")
-    st.stop()
-
-selection = st.session_state["ai_selection"][0]
-
-st.markdown(f"## 📈 {symbol} — {strategy_focus}")
-
-import time
-
-# --- Retry logic for critical market data ---
-def try_fetch_data(symbol, retries=3, delay=2):
-    status = st.empty()  # placeholder for single-line status updates
-
-    for attempt in range(retries):
-        try:
-            status.info(f"🔄 Attempt {attempt+1}/{retries}: Fetching live market data...")
-
-            indices = fetch_indices_nse()
-            spot = indices.get(symbol.upper()) or fetch_spot_price(symbol)
-            vix = indices.get("INDIAVIX") or indices.get("INDIA VIX")
-            oc = fetch_option_chain(symbol)
-            metrics = compute_core_metrics(symbol, spot, vix, oc, r=rfr, days=expiry_days)
-            pcr = metrics.get("pcr") if metrics else None
-
-            if spot and vix and pcr:
-                status.success(f"✅ Market data fetched successfully (Spot={spot:.2f}, VIX={vix:.2f}, PCR={round(pcr, 2)})")
-                return spot, vix, pcr, oc, metrics
-
-            status.warning(
-                f"⚠️ Attempt {attempt+1}/{retries} failed: Missing data "
-                f"(Spot={spot}, VIX={vix}, PCR={pcr})"
-            )
-            time.sleep(delay)
-
-        except Exception as e:
-            status.error(f"⚠️ Attempt {attempt+1}/{retries} failed: {str(e)[:100]}")
-            time.sleep(delay)
-
-    status.error("❌ Failed to fetch Spot, India VIX, or PCR after multiple retries.")
-    return None, None, None, None, None
-
-# --- Run safe fetch ---
-spot, vix, pcr, oc, metrics = try_fetch_data(symbol)
-
-# --- Stop if still missing ---
-if not spot or not vix or not pcr:
-    # st.error("❌ Critical data missing: Unable to fetch Spot, India VIX, or PCR (OI). Please retry later.")
-    if st.button("🔁 Retry Fetch Data"):
-        st.rerun()
-    st.stop()
-
-
-oc = fetch_option_chain(symbol)
-
-c1, c2, c3 = st.columns(3)
-c1.metric("Spot", f"{spot or '-'}")
-c2.metric("India VIX", f"{round(vix,2)}")
-c3.metric("PCR (OI)", f"{round(metrics.get('pcr'),2) if metrics.get('pcr') else '-'}")
-
-st.write("**IV Rank:**", metrics.get("atm_iv_rank"), "| **Expected Move (1D):**", metrics.get("expected_move_1d"))
-st.pyplot(plot_iv_rank_history())
-st.pyplot(plot_expected_move_chart(spot, metrics))
-
-strategies = build_strategies(symbol, oc, capital, risk_pct, metrics, r=rfr, days=expiry_days, focus=strategy_focus)
-from modules.ai_trade_levels import ai_trade_levels
-
-st.subheader("🎯 AI Entry / Exit / Stop-Loss Levels")
-
-ai_levels = []
-for strat in strategies:
-    ai_level = ai_trade_levels(
-        symbol,
-        spot,
-        metrics.get("atm_iv_rank", 50),
-        metrics.get("pcr", 1.0),
-        strategy=strat["Strategy"]
-    )
-    ai_levels.append(ai_level)
-
-ai_df = pd.DataFrame(ai_levels)
-st.dataframe(ai_df, use_container_width=True)
-
-st.subheader("🧮 Generated Strategy")
-st.dataframe(pd.DataFrame(strategies))
-
-st.subheader("📊 Backtest Results (Detailed)")
-bt = run_detailed_backtest(symbol, strategies)
-st.dataframe(bt, use_container_width=True)
-
-st.markdown(f"**Total P/L:** ₹{bt['P/L (₹)'].sum():,.0f} | "
-            f"Avg Return: {bt['Return (%)'].mean():.2f}% | "
-            f"Average POP: {bt['POP (%)'].mean():.1f}%")
-
-# Optional Chart
-import matplotlib.pyplot as plt
-fig, ax = plt.subplots()
-ax.plot(bt["Total Profit (₹)"], marker="o")
-ax.set_title(f"{symbol} Backtest P/L Curve")
-ax.set_xlabel("Trades")
-ax.set_ylabel("Cumulative Profit (₹)")
-st.pyplot(fig)
-
-
-cA, cB = st.columns(2)
-with cA:
-    if st.button(f"🚀 Send {symbol} to Groww (dry-run)", key=f"groww_{symbol}"):
-        st.success(place_order_groww(strategies))
-with cB:
-    if st.button(f"🚀 Send {symbol} to Zerodha (dry-run)", key=f"zerodha_{symbol}"):
-        st.success(place_order_zerodha(strategies))
-
-st.markdown("### 🧭 AI Market Summary")
-st.write(st.session_state.get("ai_summary", "—"))
-st.caption("Disclaimer: Educational/analysis only. Not financial advice.")
+    st.markdown("### 🧭 AI Market Summary")
+    st.write(st.session_state.get("ai_summary", "—"))
+    st.caption("Disclaimer: Educational/analysis only. Not financial advice.")
