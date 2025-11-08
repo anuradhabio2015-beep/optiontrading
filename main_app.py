@@ -8,19 +8,55 @@ from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 from modules.backtester import run_detailed_backtest
 from modules.order_executor import place_order_groww, place_order_zerodha
 
-# --- Initialize core market variables safely ---
+import time
+
+# --- Safe retry-based data fetch function ---
+def try_fetch_data(symbol, retries=3, delay=2):
+    """Attempt to fetch market data with retries and unified return structure."""
+    status = st.empty()  # placeholder for single-line updates
+
+    for attempt in range(retries):
+        try:
+            status.info(f"🔄 Attempt {attempt+1}/{retries}: Fetching live market data for {symbol}...")
+
+            indices = fetch_indices_nse()
+            spot = indices.get(symbol.upper()) or fetch_spot_price(symbol)
+            vix = indices.get("INDIAVIX") or indices.get("INDIA VIX") or 14.0
+            oc = fetch_option_chain(symbol)
+            metrics = compute_core_metrics(symbol, spot, vix, oc, r=rfr, days=expiry_days)
+            pcr = metrics.get("pcr") if metrics else None
+
+            # if all key values exist, return immediately
+            if spot and vix and pcr:
+                status.success(f"✅ Data fetched successfully (Spot={spot:.2f}, VIX={vix:.2f}, PCR={round(pcr, 2)})")
+                return spot, vix, pcr, oc, metrics
+
+            status.warning(
+                f"⚠️ Attempt {attempt+1}/{retries} failed: Missing (Spot={spot}, VIX={vix}, PCR={pcr})"
+            )
+            time.sleep(delay)
+
+        except Exception as e:
+            status.error(f"⚠️ Attempt {attempt+1}/{retries} failed: {str(e)[:100]}")
+            time.sleep(delay)
+
+    status.error("❌ Failed to fetch Spot, India VIX, or PCR after multiple retries.")
+    return None, None, None, None, None
+
+
+# --- Initialize variables safely ---
 spot = None
 vix = None
 pcr = None
 oc = None
 metrics = {}
 
-# --- Attempt safe data fetch (with retries) ---
+# --- Fetch the data ---
 spot, vix, pcr, oc, metrics = try_fetch_data(symbol)
 
-# --- Guard clause for missing data ---
+# --- If still missing, stop further execution ---
 if not spot or not vix or not pcr:
-    st.error("❌ Critical data missing: Spot, India VIX, or PCR not available. Please retry later.")
+    st.error("❌ Critical data missing: Unable to fetch Spot, India VIX, or PCR (OI). Please retry later.")
     if st.button("🔁 Retry Fetch Data"):
         st.rerun()
     st.stop()
