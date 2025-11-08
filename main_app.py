@@ -12,7 +12,7 @@ from modules.order_executor import place_order_groww, place_order_zerodha
 from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 
 st.set_page_config(layout="wide", page_title="Smart Trading App")
-st.title("🤖 Smart App for Option Sellingn)")
+st.title("🤖 Smart App for Option Selling")
 
 # Sidebar
 with st.sidebar:
