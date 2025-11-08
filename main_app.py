@@ -69,24 +69,43 @@ vix = indices.get("INDIAVIX", 14.0)
 oc = fetch_option_chain(symbol)
 metrics = compute_core_metrics(symbol, spot, vix, oc, r=rfr, days=expiry_days)
 
-# Retry Guard — spot, VIX, PCR validation
-pcr = metrics.get("pcr", None)
-if not spot or not vix or not pcr:
-    msg_placeholder = st.empty()
-    for attempt in range(3):
-        msg_placeholder.info(f"🔄 Attempt {attempt+1}/3: Fetching market data (Spot={spot}, VIX={vix}, PCR={pcr})...")
-        time.sleep(2)
-        indices = fetch_indices_nse()
-        spot = indices.get(symbol.upper()) or fetch_spot_price(symbol)
-        vix = indices.get("INDIAVIX", 14.0)
-        oc = fetch_option_chain(symbol)
-        metrics = compute_core_metrics(symbol, spot, vix, oc, r=rfr, days=expiry_days)
-        pcr = metrics.get("pcr", None)
-        if spot and vix and pcr:
-            break
-    else:
-        msg_placeholder.error("❌ Critical data missing. Please retry later.")
-        st.stop()
+import time
+
+# --- Retry logic for critical market data ---
+def try_fetch_data(symbol, retries=3, delay=2):
+    status = st.empty()  # placeholder for single-line status updates
+
+    for attempt in range(retries):
+        try:
+            status.info(f"🔄 Attempt {attempt+1}/{retries}: Fetching live market data...")
+
+            indices = fetch_indices_nse()
+            spot = indices.get(symbol.upper()) or fetch_spot_price(symbol)
+            vix = indices.get("INDIAVIX") or indices.get("INDIA VIX")
+            oc = fetch_option_chain(symbol)
+            metrics = compute_core_metrics(symbol, spot, vix, oc, r=rfr, days=expiry_days)
+            pcr = metrics.get("pcr") if metrics else None
+
+            if spot and vix and pcr:
+                status.success(f"✅ Market data fetched successfully (Spot={spot:.2f}, VIX={vix:.2f}, PCR={round(pcr, 2)})")
+                return spot, vix, pcr, oc, metrics
+
+            status.warning(
+                f"⚠️ Attempt {attempt+1}/{retries} failed: Missing data "
+                f"(Spot={spot}, VIX={vix}, PCR={pcr})"
+            )
+            time.sleep(delay)
+
+        except Exception as e:
+            status.error(f"⚠️ Attempt {attempt+1}/{retries} failed: {str(e)[:100]}")
+            time.sleep(delay)
+
+    status.error("❌ Failed to fetch Spot, India VIX, or PCR after multiple retries.")
+    return None, None, None, None, None
+
+# --- Run safe fetch ---
+spot, vix, pcr, oc, metrics = try_fetch_data(symbol)
+
 # --- Stop if still missing ---
 if not spot or not vix or not pcr:
     # st.error("❌ Critical data missing: Unable to fetch Spot, India VIX, or PCR (OI). Please retry later.")
