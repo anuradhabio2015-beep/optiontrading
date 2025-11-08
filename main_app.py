@@ -121,7 +121,7 @@ if not spot or not vix or not pcr:
     # st.error("❌ Critical data missing: Unable to fetch Spot, India VIX, or PCR (OI). Please retry later.")
     if st.button("🔁 Retry Fetch Data"):
         st.rerun()
-    # st.stop()
+    st.stop()
 
 # ----------------------------------------------------------------
 # Create Tabs for Organized Layout
