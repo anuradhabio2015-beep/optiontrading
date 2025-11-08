@@ -113,7 +113,7 @@ spot, vix, pcr, oc, metrics = try_fetch_data(symbol)
 
 # --- Stop if still missing ---
 if not spot or not vix or not pcr:
-    st.error("❌ Critical data missing: Unable to fetch Spot, India VIX, or PCR (OI). Please retry later.")
+    # st.error("❌ Critical data missing: Unable to fetch Spot, India VIX, or PCR (OI). Please retry later.")
     if st.button("🔁 Retry Fetch Data"):
         st.rerun()
     st.stop()
