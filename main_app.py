@@ -8,6 +8,24 @@ from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 from modules.backtester import run_detailed_backtest
 from modules.order_executor import place_order_groww, place_order_zerodha
 
+# --- Initialize core market variables safely ---
+spot = None
+vix = None
+pcr = None
+oc = None
+metrics = {}
+
+# --- Attempt safe data fetch (with retries) ---
+spot, vix, pcr, oc, metrics = try_fetch_data(symbol)
+
+# --- Guard clause for missing data ---
+if not spot or not vix or not pcr:
+    st.error("❌ Critical data missing: Spot, India VIX, or PCR not available. Please retry later.")
+    if st.button("🔁 Retry Fetch Data"):
+        st.rerun()
+    st.stop()
+
+
 # Tabs (like Groww)
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📈 Market Overview",
