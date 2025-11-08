@@ -105,8 +105,8 @@ def try_fetch_data(symbol, retries=3, delay=2):
             status.error(f"⚠️ Attempt {attempt+1}/{retries} failed: {str(e)[:100]}")
             time.sleep(delay)
 
-    # status.error("❌ Failed to fetch Spot, India VIX, or PCR after multiple retries.")
-    # return None, None, None, None, None
+    status.error("❌ Failed to fetch Spot, India VIX, or PCR after multiple retries.")
+    return None, None, None, None, None
 
 # --- Run safe fetch ---
 spot, vix, pcr, oc, metrics = try_fetch_data(symbol)
