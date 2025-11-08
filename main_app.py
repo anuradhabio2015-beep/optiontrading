@@ -12,8 +12,8 @@ from modules.backtester import run_detailed_backtest
 from modules.ai_trade_levels import ai_trade_levels
 from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 
-st.set_page_config(page_title="Smart Option Selling Dashboard", layout="wide")
-st.title("🤖 Smart Option Selling Dashboard — Gemini Pro (Tabs Edition)")
+st.set_page_config(page_title="Smart Option Selling", layout="wide")
+st.title("SmartAppOptionTrading")
 
 # ----------------------------------------------------------------
 # Sidebar Configuration
@@ -151,6 +151,38 @@ with tab_strategy:
     st.subheader("🎯 AI-Generated Strategy Ideas")
     strategies = build_strategies(symbol, oc, capital, risk_pct, metrics, r=rfr, days=expiry_days, focus=strategy_focus)
     st.dataframe(pd.DataFrame(strategies), use_container_width=True)
+    
+    from modules.order_executor import place_order_groww, place_order_zerodha
+    st.markdown("### 🧾 Place Order")
+if broker == "Zerodha" and gemini_key and zerodha_api_key and zerodha_access_token:
+    st.success("✅ Zerodha broker connected.")
+    for strat in strategies:
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button(f"📤 Place {strat['Strategy']} in Zerodha", key=f"zerodha_{strat['Strategy']}"):
+                msg = place_order_zerodha(
+                    zerodha_api_key,
+                    zerodha_access_token,
+                    symbol,
+                    48700,  # Example strike placeholder — can fetch dynamically
+                    "CE",
+                    "28NOV24",
+                    25,
+                    120.0,
+                    "NRML"
+                )
+                st.success(msg)
+        with col2:
+            st.write(f"Strategy: {strat['Strategy']}")
+elif broker == "Groww":
+    st.info("📈 Paper trade mode active (Groww)")
+    for strat in strategies:
+        if st.button(f"💹 Simulate {strat['Strategy']} in Groww", key=f"groww_{strat['Strategy']}"):
+            msg = place_order_groww(symbol, 48700, "CE", "28NOV24", 25, 120.0)
+            st.success(msg)
+else:
+    st.warning("⚠️ Connect your broker in sidebar to enable live order placement.")
+
 
 # ----------------------------------------------------------------
 # TAB 3: Backtest
