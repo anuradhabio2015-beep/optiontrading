@@ -58,10 +58,13 @@ if not gemini_key:
 symbol = st.session_state["symbol"]
 strategy_focus = st.session_state["strategy_focus"]
 
-if run_ai or "ai_selection" not in st.session_state:
+if run_ai:
     with st.spinner(f"🤖 Running Gemini for {symbol}..."):
         st.session_state["ai_selection"] = ai_select_stocks_gemini([symbol])
         st.session_state["ai_summary"] = ai_market_summary_gemini(st.session_state["ai_selection"])
+elif "ai_selection" not in st.session_state:
+    st.info("👆 Click **Run Analysis** to start Gemini AI processing.")
+
 
 selection = st.session_state["ai_selection"][0]
 st.markdown(f"## 📈 {symbol} — {strategy_focus}")
