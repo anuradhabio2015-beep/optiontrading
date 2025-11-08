@@ -8,13 +8,40 @@ from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 from modules.backtester import run_detailed_backtest
 from modules.order_executor import place_order_groww, place_order_zerodha
 
+import streamlit as st
+
+st.set_page_config(page_title="Smart Option Selling Dashboard", layout="wide")
+
+# --- Sidebar configuration ---
+with st.sidebar:
+    st.header("⚙️ Configuration")
+    gemini_key = st.text_input("🔑 Gemini API Key", type="password", placeholder="Paste Gemini key here")
+
+    default_universe = ["BANKNIFTY", "NIFTY", "RELIANCE", "HDFCBANK", "ICICIBANK"]
+    symbol = st.selectbox("📊 Select Index/Stock", options=default_universe, index=0)
+
+    strategy_focus = st.selectbox("🎯 Strategy Focus",
+                                  ["AI-Auto", "Iron Condor", "Credit Spread", "Calendar Spread"], index=0)
+
+    capital = st.number_input("💰 Portfolio Capital (₹)", 100000, 10000000, 200000, step=50000)
+    risk_pct = st.slider("Risk % per Trade", 0.5, 5.0, 1.5)
+    rfr = st.number_input("Risk-Free Rate (annual)", 0.0, 0.2, 0.07, step=0.005, format="%.3f")
+    expiry_days = st.slider("Days to expiry (estimate)", 1, 45, 15)
+
+st.session_state.update({
+    "symbol": symbol,
+    "strategy_focus": strategy_focus,
+    "capital": capital,
+    "risk_pct": risk_pct,
+    "rfr": rfr,
+    "expiry_days": expiry_days
+})
+
+    
 import time
 
-# --- Safe retry-based data fetch function ---
 def try_fetch_data(symbol, retries=3, delay=2):
-    """Attempt to fetch market data with retries and unified return structure."""
-    status = st.empty()  # placeholder for single-line updates
-
+    status = st.empty()
     for attempt in range(retries):
         try:
             status.info(f"🔄 Attempt {attempt+1}/{retries}: Fetching live market data for {symbol}...")
@@ -26,16 +53,12 @@ def try_fetch_data(symbol, retries=3, delay=2):
             metrics = compute_core_metrics(symbol, spot, vix, oc, r=rfr, days=expiry_days)
             pcr = metrics.get("pcr") if metrics else None
 
-            # if all key values exist, return immediately
             if spot and vix and pcr:
                 status.success(f"✅ Data fetched successfully (Spot={spot:.2f}, VIX={vix:.2f}, PCR={round(pcr, 2)})")
                 return spot, vix, pcr, oc, metrics
 
-            status.warning(
-                f"⚠️ Attempt {attempt+1}/{retries} failed: Missing (Spot={spot}, VIX={vix}, PCR={pcr})"
-            )
+            status.warning(f"⚠️ Attempt {attempt+1}/{retries} failed: Missing (Spot={spot}, VIX={vix}, PCR={pcr})")
             time.sleep(delay)
-
         except Exception as e:
             status.error(f"⚠️ Attempt {attempt+1}/{retries} failed: {str(e)[:100]}")
             time.sleep(delay)
@@ -44,17 +67,10 @@ def try_fetch_data(symbol, retries=3, delay=2):
     return None, None, None, None, None
 
 
-# --- Initialize variables safely ---
-spot = None
-vix = None
-pcr = None
-oc = None
-metrics = {}
 
-# --- Fetch the data ---
+# --- Initialize safely ---
 spot, vix, pcr, oc, metrics = try_fetch_data(symbol)
 
-# --- If still missing, stop further execution ---
 if not spot or not vix or not pcr:
     st.error("❌ Critical data missing: Unable to fetch Spot, India VIX, or PCR (OI). Please retry later.")
     if st.button("🔁 Retry Fetch Data"):
