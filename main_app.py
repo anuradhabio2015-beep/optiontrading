@@ -66,7 +66,12 @@ elif "ai_selection" not in st.session_state:
     st.info("👆 Click **Run Analysis** to start Gemini AI processing.")
 
 
+if "ai_selection" not in st.session_state:
+    st.info("👆 Click **Run Analysis** to generate Gemini AI selection and strategies.")
+    st.stop()
+
 selection = st.session_state["ai_selection"][0]
+
 st.markdown(f"## 📈 {symbol} — {strategy_focus}")
 
 indices = fetch_indices_nse()
