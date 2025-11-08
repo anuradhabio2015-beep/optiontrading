@@ -1,21 +1,37 @@
-def build_strategies(symbol, oc, capital, risk_pct, metrics, r=0.07, days=7):
-    lot_risk = int(capital*(risk_pct/100.0))
-    em = metrics.get("expected_move_1d",(400,None))[0] or 400
-    return [
-        {def build_strategies(symbol, oc, capital, risk_pct, metrics, r=0.07, days=7, focus="AI-Auto"):
+def build_strategies(symbol, oc, capital, risk_pct, metrics, r=0.07, days=7, focus="AI-Auto"):
+    """
+    Build option-selling strategies based on selected focus.
+    :param symbol: str
+    :param oc: dict (option chain data)
+    :param capital: float
+    :param risk_pct: float (% of portfolio risk per trade)
+    :param metrics: dict (analytics data like expected move, IV rank)
+    :param r: risk-free rate
+    :param days: days to expiry
+    :param focus: selected strategy focus ("Iron Condor", etc.)
+    :return: list of dict strategies
+    """
+
     spot = metrics.get("spot") or metrics.get("underlying") or 0
+    expected_move = 0
+    if isinstance(metrics.get("expected_move_3d"), tuple):
+        expected_move = metrics["expected_move_3d"][0] or 200
+
     strategies = []
 
+    # 1️⃣ Iron Condor
     if focus in ["AI-Auto", "Iron Condor"]:
         strategies.append({
             "Strategy": "Iron Condor",
-            "Contracts": f"{symbol} ±{int(metrics.get('expected_move_3d', (200,))[0])} CE/PE",
+            "Contracts": f"{symbol} ±{int(expected_move)} CE/PE",
             "Risk ₹": int(capital * (risk_pct / 100)),
             "Max Profit": "Credit received",
             "Max Loss": "Spread width - credit",
             "Win%": "≈65%",
             "Notes": "Neutral market, IV high"
         })
+
+    # 2️⃣ Credit Spread
     if focus in ["AI-Auto", "Credit Spread"]:
         strategies.append({
             "Strategy": "Bull Put Credit Spread",
@@ -26,6 +42,8 @@ def build_strategies(symbol, oc, capital, risk_pct, metrics, r=0.07, days=7):
             "Win%": "≈70%",
             "Notes": "Bullish bias, IV > 14"
         })
+
+    # 3️⃣ Calendar Spread
     if focus in ["AI-Auto", "Calendar Spread"]:
         strategies.append({
             "Strategy": "ATM Calendar",
@@ -36,29 +54,5 @@ def build_strategies(symbol, oc, capital, risk_pct, metrics, r=0.07, days=7):
             "Win%": "≈55%",
             "Notes": "Low IV, stable vols"
         })
-    return strategies
 
-            "symbol": symbol, "name": "Income — Iron Condor",
-            "contracts": f"Sell (ATM-{int(em)}) PE / Sell (ATM+{int(em)}) CE; Buy farther wings",
-            "entry": "Net credit (limit)",
-            "sl": "1.5× credit or delta breach",
-            "t1": "50% credit", "t2": "75% credit",
-            "lots": 1, "risk": lot_risk, "pop_est%": 62
-        },
-        {
-            "symbol": symbol, "name": "Directional — Put Credit Spread",
-            "contracts": f"Short OTM PE near −{int(0.8*em)}; Long PE −{int(1.5*em)}",
-            "entry": "Net credit",
-            "sl": "Credit × 2",
-            "t1": "50% credit", "t2": "80% credit",
-            "lots": 1, "risk": lot_risk, "pop_est%": 70
-        },
-        {
-            "symbol": symbol, "name": "Volatility — ATM Calendar (CE)",
-            "contracts": "Buy next‑month ATM CE / Sell weekly ATM CE",
-            "entry": "Net debit",
-            "sl": "Debit −30%",
-            "t1": "25%", "t2": "50%",
-            "lots": 1, "risk": "Limited to debit", "pop_est%": 58
-        }
-    ]
+    return strategies
