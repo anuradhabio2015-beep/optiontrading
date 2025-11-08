@@ -74,12 +74,41 @@ selection = st.session_state["ai_selection"][0]
 
 st.markdown(f"## 📈 {symbol} — {strategy_focus}")
 
-indices = fetch_indices_nse()
-spot = indices.get(symbol.upper()) or fetch_spot_price(symbol)
-vix = indices.get("INDIAVIX", 14.0)
-oc = fetch_option_chain(symbol)
+import time
 
-metrics = compute_core_metrics(symbol, spot, vix, oc, r=rfr, days=expiry_days)
+# --- Retry logic for critical market data ---
+def try_fetch_data(symbol, retries=3, delay=2):
+    for attempt in range(retries):
+        try:
+            indices = fetch_indices_nse()
+            spot = indices.get(symbol.upper()) or fetch_spot_price(symbol)
+            vix = indices.get("INDIAVIX") or indices.get("INDIA VIX") or 14.0
+            oc = fetch_option_chain(symbol)
+            metrics = compute_core_metrics(symbol, spot, vix, oc, r=rfr, days=expiry_days)
+
+            # Compute PCR only if available
+            pcr = metrics.get("pcr") if metrics else None
+
+            if spot and vix and pcr:
+                return spot, vix, pcr, oc, metrics
+            else:
+                st.warning(f"⚠️ Attempt {attempt+1}/{retries} failed: Missing data (Spot={spot}, VIX={vix}, PCR={pcr})")
+                time.sleep(delay)
+        except Exception as e:
+            st.error(f"Attempt {attempt+1}/{retries} failed: {e}")
+            time.sleep(delay)
+    return None, None, None, None, None
+
+
+# --- Run safe fetch ---
+spot, vix, pcr, oc, metrics = try_fetch_data(symbol)
+
+# --- Popup & safe stop if data still missing ---
+if not spot or not vix or not pcr:
+    st.error("❌ Critical data missing: Unable to fetch Spot, India VIX, or PCR (OI). Please retry later.")
+    st.stop()
+
+oc = fetch_option_chain(symbol)
 
 c1, c2, c3 = st.columns(3)
 c1.metric("Spot", f"{spot or '-'}")
@@ -96,8 +125,6 @@ st.dataframe(pd.DataFrame(strategies))
 
 st.subheader("📊 Backtest Results (Detailed)")
 bt = run_detailed_backtest(symbol, strategies)
-
-st.subheader("📊 Backtest Results (Detailed)")
 st.dataframe(bt, use_container_width=True)
 
 st.markdown(f"**Total P/L:** ₹{bt['P/L (₹)'].sum():,.0f} | "
