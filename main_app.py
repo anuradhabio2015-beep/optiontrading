@@ -59,8 +59,8 @@ with st.sidebar:
 
     run_ai = st.button("🚀 Run Analysis", use_container_width=True)
 
-# if not gemini_key: 
-#     st.stop()
+if not gemini_key: 
+    st.stop()
 
 
 # ----------------------------------------------------------
