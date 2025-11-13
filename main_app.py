@@ -13,6 +13,7 @@ from modules.ai_trade_levels import ai_trade_levels
 from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 from modules.order_executor import place_order_groww, place_order_zerodha
 
+
 # ----------------------------------------------------------
 # PAGE CONFIG
 # ----------------------------------------------------------
@@ -23,91 +24,76 @@ st.set_page_config(
 )
 
 # ----------------------------------------------------------
-# UI CSS — hide default Streamlit sidebar permanently
+# UI CSS — KEEP SIDEBAR VISIBLE
 # ----------------------------------------------------------
 UI_STYLE = """
 <style>
-/* Hide default Streamlit header & footer */
+
+body {
+    font-family: 'Inter', sans-serif !important;
+}
+
+/* Hide only Streamlit system header/footer */
 header {visibility: hidden;}
 footer {visibility: hidden;}
 [data-testid="stToolbar"] {display: none}
 
-/* Permanently hide the sidebar */
+/* Keep sidebar visible (NO hiding) */
 [data-testid="stSidebar"] {
-    display: none !important;
+    background: #f8f9ff !important;
+    padding: 18px !important;
+    border-right: 1px solid #e6e6e6;
 }
 
-/* App header card */
+/* Header Card */
 .custom-header {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 12px 18px;
-  border-radius: 12px;
-  margin-bottom: 14px;
+  padding: 14px 20px;
+  border-radius: 14px;
   background: linear-gradient(90deg, #ffffff, #eef3ff);
-  box-shadow: 0 6px 22px rgba(11,22,60,0.06);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  margin-bottom: 1rem;
 }
 
 .custom-header .title {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 800;
   margin: 0;
 }
 
 .custom-header .subtitle {
-  font-size: 13px;
-  color: #555;
+  font-size: 14px;
+  color: #666;
   margin: 0;
 }
 
-/* Tabs style */
-.stTabs [data-baseweb="tab-list"] { gap: 6px; }
+/* Tabs UI */
+.stTabs [data-baseweb="tab-list"] { gap: 8px; }
 .stTabs [data-baseweb="tab"] {
-    background-color: #f1f4ff !important;
+    background-color: #eef2ff !important;
     border-radius: 8px !important;
     padding: 6px 12px !important;
 }
 .stTabs [aria-selected="true"] {
     background-color: #2c6bed !important;
     color: white !important;
-    font-weight: 600;
+    font-weight: 700;
 }
+
 </style>
 """
 st.markdown(UI_STYLE, unsafe_allow_html=True)
 
 # ----------------------------------------------------------
-# LOGO (data url) + header
+# LOGO (SVG DATA URL)
 # ----------------------------------------------------------
-LOGO_URL = "data:image/svg+xml;utf8,\
-<svg width='220' height='220' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'>\
-<defs>\
-<linearGradient id='g1' x1='0%' y1='0%' x2='100%' y2='100%'>\
-<stop offset='0%' stop-color='%2300B4D8'/>\
-<stop offset='50%' stop-color='%2300D4A8'/>\
-<stop offset='100%' stop-color='%2329E87C'/>\
-</linearGradient>\
-</defs>\
-<circle cx='110' cy='110' r='95' fill='url(%23g1)'/>\
-<circle cx='80' cy='80' r='8' fill='white'/>\
-<circle cx='140' cy='70' r='8' fill='white'/>\
-<circle cx='160' cy='120' r='8' fill='white'/>\
-<circle cx='120' cy='150' r='8' fill='white'/>\
-<circle cx='70' cy='140' r='8' fill='white'/>\
-<line x1='80' y1='80' x2='140' y2='70' stroke='white' stroke-width='4' stroke-linecap='round'/>\
-<line x1='140' y1='70' x2='160' y2='120' stroke='white' stroke-width='4' stroke-linecap='round'/>\
-<line x1='160' y1='120' x2='120' y2='150' stroke='white' stroke-width='4' stroke-linecap='round'/>\
-<line x1='120' y1='150' x2='70' y2='140' stroke='white' stroke-width='4' stroke-linecap='round'/>\
-<line x1='70' y1='140' x2='80' y2='80' stroke='white' stroke-width='4' stroke-linecap='round'/>\
-<rect x='95' y='100' width='10' height='45' fill='white' rx='2'/>\
-<rect x='115' y='85' width='10' height='65' fill='white' rx='2'/>\
-<rect x='135' y='105' width='10' height='40' fill='white' rx='2'/>\
-<line x1='100' y1='90' x2='100' y2='155' stroke='white' stroke-width='4' stroke-linecap='round'/>\
-<line x1='120' y1='70' x2='120' y2='160' stroke='white' stroke-width='4' stroke-linecap='round'/>\
-<line x1='140' y1='95' x2='140' y2='150' stroke='white' stroke-width='4' stroke-linecap='round'/>\
-</svg>"
+LOGO_URL = "data:image/svg+xml;utf8,<svg width='220' height='220' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'><defs><linearGradient id='g1' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%2300B4D8'/><stop offset='50%' stop-color='%2300D4A8'/><stop offset='100%' stop-color='%2329E87C'/></linearGradient></defs><circle cx='110' cy='110' r='95' fill='url(%23g1)'/><circle cx='80' cy='80' r='8' fill='white'/><circle cx='140' cy='70' r='8' fill='white'/><circle cx='160' cy='120' r='8' fill='white'/><circle cx='120' cy='150' r='8' fill='white'/><circle cx='70' cy='140' r='8' fill='white'/><line x1='80' y1='80' x2='140' y2='70' stroke='white' stroke-width='4' stroke-linecap='round'/><line x1='140' y1='70' x2='160' y2='120' stroke='white' stroke-width='4' stroke-linecap='round'/><line x1='160' y1='120' x2='120' y2='150' stroke='white' stroke-width='4' stroke-linecap='round'/><line x1='120' y1='150' x2='70' y2='140' stroke='white' stroke-width='4' stroke-linecap='round'/><line x1='70' y1='140' x2='80' y2='80' stroke='white' stroke-width='4' stroke-linecap='round'/><rect x='95' y='100' width='10' height='45' fill='white' rx='2'/><rect x='115' y='85' width='10' height='65' fill='white' rx='2'/><rect x='135' y='105' width='10' height='40' fill='white' rx='2'/><line x1='100' y1='90' x2='100' y2='155' stroke='white' stroke-width='4' stroke-linecap='round'/><line x1='120' y1='70' x2='120' y2='160' stroke='white' stroke-width='4' stroke-linecap='round'/><line x1='140' y1='95' x2='140' y2='150' stroke='white' stroke-width='4' stroke-linecap='round'/></svg>"
 
+# ----------------------------------------------------------
+# CUSTOM HEADER
+# ----------------------------------------------------------
 header_html = f"""
 <div class="custom-header">
   <img src="{LOGO_URL}" width="64" height="64" style="border-radius:12px;"/>
@@ -122,36 +108,46 @@ st.markdown(header_html, unsafe_allow_html=True)
 st.write("### 👋 Welcome! Your AI-powered options trading assistant is ready.")
 
 # ----------------------------------------------------------
-# CONFIGURATION PANEL (moved from sidebar into top expander)
+# SIDEBAR CONFIGURATION (now visible & clean)
 # ----------------------------------------------------------
-with st.expander("⚙️ Configuration (click to open)", expanded=True):
-    col1, col2 = st.columns([2, 1])
-    with col1:
-        gemini_key = st.text_input("🔑 Gemini API Key", type="password", key="cfg_gemini")
-        broker = st.selectbox("Broker (Zerodha/Groww/None)", ["None", "Zerodha", "Groww"], key="cfg_broker")
-        if broker == "Zerodha":
-            zerodha_api_key = st.text_input("Zerodha API Key", type="password", key="cfg_z_api")
-            zerodha_access_token = st.text_input("Zerodha Access Token", type="password", key="cfg_z_token")
-        else:
-            zerodha_api_key = None
-            zerodha_access_token = None
+with st.sidebar:
+    st.header("⚙️ Configuration Settings")
 
-    with col2:
-        default_universe = ["BANKNIFTY", "NIFTY", "RELIANCE", "HDFCBANK", "ICICIBANK"]
-        symbol = st.selectbox("Select Symbol / Index", default_universe, key="cfg_symbol")
-        strategy_focus = st.selectbox("Strategy Type", ["AI-Auto", "Iron Condor", "Credit Spread", "Calendar Spread"], key="cfg_strategy")
-        capital = st.number_input("Portfolio Capital (₹)", 100000, 20000000, 200000, step=50000, key="cfg_capital")
-        risk_pct = st.slider("Risk % per Trade", 0.5, 5.0, 1.5, key="cfg_risk")
-        expiry_days = st.slider("Days to Expiry", 1, 45, 15, key="cfg_expiry")
-        run_ai = st.button("🚀 Run Analysis", use_container_width=True, key="cfg_run")
+    gemini_key = st.text_input("🔑 Gemini API Key", type="password")
+    if gemini_key:
+        os.environ["GEMINI_API_KEY"] = gemini_key
+        st.success("Gemini Key Loaded")
+    else:
+        st.info("Enter Gemini API Key to enable AI features.")
 
-# persist Gemini key into env/session if provided
-if gemini_key:
-    os.environ["GEMINI_API_KEY"] = gemini_key
-    st.session_state["gemini_key"] = gemini_key
+    st.markdown("### 🏦 Broker Settings")
+    broker = st.radio("Broker", ["None", "Zerodha", "Groww"])
+
+    if broker == "Zerodha":
+        zerodha_api_key = st.text_input("Zerodha API Key", type="password")
+        zerodha_access_token = st.text_input("Zerodha Access Token", type="password")
+    else:
+        zerodha_api_key = None
+        zerodha_access_token = None
+
+    st.markdown("### 📊 Trading Inputs")
+
+    universe = ["BANKNIFTY", "NIFTY", "RELIANCE", "ICICIBANK", "HDFCBANK"]
+    symbol = st.selectbox("Select Index / Stock", universe)
+
+    strategy_focus = st.selectbox(
+        "Strategy Focus",
+        ["AI-Auto", "Iron Condor", "Credit Spread", "Calendar Spread"]
+    )
+
+    capital = st.number_input("Portfolio Capital (₹)", min_value=100000, max_value=20000000, value=200000, step=50000)
+    risk_pct = st.slider("Risk % per Trade", 0.5, 5.0, 1.5)
+    expiry_days = st.slider("Days to Expiry", 5, 45, 15)
+
+    run_ai = st.button("🚀 Run Analysis", use_container_width=True)
 
 # ----------------------------------------------------------
-# Run AI only when button clicked
+# RUN AI BASED ON BUTTON
 # ----------------------------------------------------------
 if run_ai:
     with st.spinner(f"🤖 Running Gemini for {symbol}..."):
@@ -159,113 +155,107 @@ if run_ai:
             st.session_state["ai_selection"] = ai_select_stocks_gemini([symbol])
             st.session_state["ai_summary"] = ai_market_summary_gemini(st.session_state["ai_selection"])
         except Exception as e:
-            st.error(f"⚠️ Gemini Error: {str(e)[:120]}")
+            st.error(f"Gemini API Error: {str(e)[:120]}")
             st.session_state["ai_selection"] = [{"symbol": symbol, "bias": "neutral", "strategy": "Iron Condor"}]
-            st.session_state["ai_summary"] = "⚠️ Fallback summary."
+            st.session_state["ai_summary"] = "⚠️ Fallback AI Summary."
 
 if "ai_selection" not in st.session_state:
-    st.info("👆 Click **Run Analysis** to start the AI analysis.")
     st.stop()
 
 selection = st.session_state["ai_selection"][0]
 
 # ----------------------------------------------------------
-# SAFE DATA FETCH
+# SAFE MARKET DATA FETCH
 # ----------------------------------------------------------
-def try_fetch_data(symbol, retries=3, delay=2):
-    status = st.empty()
-    for attempt in range(retries):
+def try_fetch_data(symbol):
+    msg = st.empty()
+    for attempt in range(1, 4):
+        msg.info(f"⏳ Fetching live data (Attempt {attempt}/3)...")
         try:
-            status.info(f"🔄 Attempt {attempt+1}/{retries} — fetching market data...")
             indices = fetch_indices_nse()
             spot = indices.get(symbol.upper()) or fetch_spot_price(symbol)
-            vix = indices.get("INDIAVIX") or indices.get("INDIA VIX")
+            vix = indices.get("INDIAVIX")
             oc = fetch_option_chain(symbol)
             metrics = compute_core_metrics(symbol, spot, vix, oc, r=0.07, days=expiry_days)
             pcr = metrics.get("pcr") if metrics else None
 
             if spot and vix and pcr:
-                status.success(f"✅ Market data loaded (Spot={spot:.2f}, VIX={vix:.2f}, PCR={round(pcr,2)})")
+                msg.success(f"✅ Success: Spot={spot}, VIX={vix}, PCR={pcr}")
                 return spot, vix, pcr, oc, metrics
+        except:
+            pass
+        time.sleep(1)
 
-            status.warning(f"⚠️ Missing: Spot={spot}, VIX={vix}, PCR={pcr}")
-            time.sleep(delay)
-        except Exception as e:
-            status.error(f"⚠️ Error: {str(e)[:120]}")
-            time.sleep(delay)
-    status.error("❌ Failed to fetch market data after retries.")
+    msg.error("❌ Failed to fetch spot/VIX/PCR.")
     return None, None, None, None, None
 
 spot, vix, pcr, oc, metrics = try_fetch_data(symbol)
-
-if not spot or not vix or not pcr:
-    if st.button("🔁 Retry Fetch Data"):
-        st.experimental_rerun()
-    st.error("❌ Critical data missing. Please try again later.")
+if not (spot and vix and pcr):
     st.stop()
 
 # ----------------------------------------------------------
 # TABS
 # ----------------------------------------------------------
-tab_market, tab_strategy, tab_backtest, tab_ai_levels, tab_summary = st.tabs(
-    ["📈 Market Snapshot", "🎯 Strategy Ideas", "🧮 Backtest", "⚙️ AI Entry/Exit/SL", "🧠 Summary"]
-)
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    "📈 Market Snapshot",
+    "🎯 Strategy Ideas",
+    "🧮 Backtest",
+    "⚙️ AI Entry/Exit/SL",
+    "🧠 Summary"
+])
 
-# TAB 1: Market Snapshot
-with tab_market:
-    st.subheader(f"📊 {symbol} — Market Snapshot")
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Spot", f"{spot:,.2f}")
-    c2.metric("India VIX", f"{vix:.2f}")
-    c3.metric("PCR (OI)", f"{pcr:.2f}")
+# --- TAB 1 ---
+with tab1:
+    st.subheader(f"{symbol} — Market Snapshot")
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Spot", f"{spot:,.2f}")
+    col2.metric("India VIX", f"{vix:.2f}")
+    col3.metric("PCR (OI)", f"{pcr:.2f}")
 
-    st.write(f"**IV Rank:** {metrics.get('atm_iv_rank', '–')} | **Expected Move (1D):** {metrics.get('expected_move_1d')}")
     st.pyplot(plot_iv_rank_history())
     st.pyplot(plot_expected_move_chart(spot, metrics))
 
-# TAB 2: Strategy Ideas
-with tab_strategy:
-    st.subheader("🎯 AI-Generated Strategy Ideas")
-    strategies = build_strategies(symbol, oc, capital, risk_pct, metrics, r=0.07, days=expiry_days, focus=strategy_focus)
+# --- TAB 2 ---
+with tab2:
+    st.subheader("🎯 AI Strategy Ideas")
+    strategies = build_strategies(symbol, oc, capital, risk_pct, metrics, r=0.07, days=expiry_days)
     st.dataframe(pd.DataFrame(strategies), use_container_width=True)
 
-    st.markdown("### 🧾 Place Order")
+    st.markdown("### 🧾 Order Placement")
+
     if broker == "Zerodha" and zerodha_api_key and zerodha_access_token:
         st.success("Zerodha Connected")
         for i, strat in enumerate(strategies):
-            if st.button(f"📤 Place {strat['Strategy']} — Zerodha", key=f"order_z_{i}"):
-                # NOTE: replace strike/expiry/qty/price with live values as needed
-                msg = place_order_zerodha(zerodha_api_key, zerodha_access_token, symbol, 48700, "CE", "28NOV24", 25, 120.0)
+            if st.button(f"📤 Execute {strat['Strategy']}", key=f"z_{i}"):
+                msg = place_order_zerodha(
+                    zerodha_api_key, zerodha_access_token,
+                    symbol, 48700, "CE", "28NOV24", 25, 120
+                )
                 st.success(msg)
+
     elif broker == "Groww":
         st.info("Groww Paper Trading Mode")
         for i, strat in enumerate(strategies):
-            if st.button(f"💹 Paper Trade {strat['Strategy']}", key=f"order_g_{i}"):
-                msg = place_order_groww(symbol, 48700, "CE", "28NOV24", 25, 120.0)
+            if st.button(f"💹 Simulate {strat['Strategy']}", key=f"g_{i}"):
+                msg = place_order_groww(symbol, 48700, "CE", "28NOV24", 25, 120)
                 st.success(msg)
-    else:
-        st.info("Select broker and credentials in the configuration to enable order placement.")
 
-# TAB 3: Backtest
-with tab_backtest:
+# --- TAB 3 ---
+with tab3:
     st.subheader("🧮 Backtest Results")
     bt = run_detailed_backtest(symbol, strategies)
     st.dataframe(bt, use_container_width=True)
-    if "Total Profit (₹)" in bt.columns:
-        st.line_chart(bt["Total Profit (₹)"])
-    else:
-        st.write("Backtest output does not contain cumulative P/L series.")
 
-# TAB 4: AI Entry/Exit/SL
-with tab_ai_levels:
+# --- TAB 4 ---
+with tab4:
     st.subheader("⚙️ AI Entry, Exit & Stop-Loss Levels")
-    ai_levels = []
-    for strat in strategies:
-        ai_levels.append(ai_trade_levels(symbol, spot, metrics.get("atm_iv_rank", 50), metrics.get("pcr", 1.0), strat["Strategy"]))
+    ai_levels = [
+        ai_trade_levels(symbol, spot, metrics.get("atm_iv_rank", 50), metrics.get("pcr", 1.0), strat["Strategy"])
+        for strat in strategies
+    ]
     st.dataframe(pd.DataFrame(ai_levels), use_container_width=True)
 
-# TAB 5: Summary
-with tab_summary:
-    st.subheader("🧠 AI Summary & Insights")
-    st.write(st.session_state.get("ai_summary", "—"))
-    st.caption("⚠️ Educational use only. Not financial advice.")
+# --- TAB 5 ---
+with tab5:
+    st.subheader("🧠 AI Summary")
+    st.write(st.session_state["ai_summary"])
