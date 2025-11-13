@@ -15,6 +15,18 @@ from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 st.set_page_config(page_title="Smart Option Selling", layout="wide")
 st.title("SmartAppOptionTrading")
 
+# -------------------------------------------------------
+# REMOVE STREAMLIT DEFAULT HEADER/FOOTER
+# -------------------------------------------------------
+hide_default = """
+    <style>
+        #MainMenu {visibility: hidden;}
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+    </style>
+"""
+st.markdown(hide_default, unsafe_allow_html=True)
+
 # ----------------------------------------------------------------
 # Sidebar Configuration
 # ----------------------------------------------------------------
