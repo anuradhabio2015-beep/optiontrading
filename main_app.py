@@ -20,8 +20,8 @@ st.title("SmartAppOptionTrading")
 # -------------------------------------------------------
 hide_default = """
     <style>
-         MainMenu {visibility: hidden;}
-        # header {visibility: hidden;}
+        # MainMenu {visibility: hidden;}
+        header {visibility: hidden;}
         footer {visibility: hidden;}
     </style>
 """
