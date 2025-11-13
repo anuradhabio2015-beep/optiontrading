@@ -16,37 +16,37 @@ from modules.order_executor import place_order_groww, place_order_zerodha
 # ----------------------------------------------------------
 # CUSTOM HEADER
 # ----------------------------------------------------------
-# LOGO_URL = "https://placehold.co/80x80/png?text=LOGO"
-LOGO_URL = "data:image/svg+xml;utf8,\
-<svg width='220' height='220' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'>\
-<defs>\
-<linearGradient id='g1' x1='0%' y1='0%' x2='100%' y2='100%'>\
-<stop offset='0%' stop-color='%2300B4D8'/>\
-<stop offset='50%' stop-color='%2300D4A8'/>\
-<stop offset='100%' stop-color='%2329E87C'/>\
-</linearGradient>\
-</defs>\
-<circle cx='110' cy='110' r='95' fill='url(%23g1)'/>\
-<!-- AI neural network nodes -->\
-<circle cx='80' cy='80' r='8' fill='white'/>\
-<circle cx='140' cy='70' r='8' fill='white'/>\
-<circle cx='160' cy='120' r='8' fill='white'/>\
-<circle cx='120' cy='150' r='8' fill='white'/>\
-<circle cx='70' cy='140' r='8' fill='white'/>\
-<!-- Network connections -->\
-<line x1='80' y1='80' x2='140' y2='70' stroke='white' stroke-width='4' stroke-linecap='round'/>\
-<line x1='140' y1='70' x2='160' y2='120' stroke='white' stroke-width='4' stroke-linecap='round'/>\
-<line x1='160' y1='120' x2='120' y2='150' stroke='white' stroke-width='4' stroke-linecap='round'/>\
-<line x1='120' y1='150' x2='70' y2='140' stroke='white' stroke-width='4' stroke-linecap='round'/>\
-<line x1='70' y1='140' x2='80' y2='80' stroke='white' stroke-width='4' stroke-linecap='round'/>\
-<!-- Candlestick chart -->\
-<rect x='95' y='100' width='10' height='45' fill='white' rx='2'/>\
-<rect x='115' y='85' width='10' height='65' fill='white' rx='2'/>\
-<rect x='135' y='105' width='10' height='40' fill='white' rx='2'/>\
-<line x1='100' y1='90' x2='100' y2='155' stroke='white' stroke-width='4' stroke-linecap='round'/>\
-<line x1='120' y1='70' x2='120' y2='160' stroke='white' stroke-width='4' stroke-linecap='round'/>\
-<line x1='140' y1='95' x2='140' y2='150' stroke='white' stroke-width='4' stroke-linecap='round'/>\
-</svg>"
+LOGO_URL = "https://placehold.co/80x80/png?text=LOGO"
+# LOGO_URL = "data:image/svg+xml;utf8,\
+# <svg width='220' height='220' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'>\
+# <defs>\
+# <linearGradient id='g1' x1='0%' y1='0%' x2='100%' y2='100%'>\
+# <stop offset='0%' stop-color='%2300B4D8'/>\
+# <stop offset='50%' stop-color='%2300D4A8'/>\
+# <stop offset='100%' stop-color='%2329E87C'/>\
+# </linearGradient>\
+# </defs>\
+# <circle cx='110' cy='110' r='95' fill='url(%23g1)'/>\
+# <!-- AI neural network nodes -->\
+# <circle cx='80' cy='80' r='8' fill='white'/>\
+# <circle cx='140' cy='70' r='8' fill='white'/>\
+# <circle cx='160' cy='120' r='8' fill='white'/>\
+# <circle cx='120' cy='150' r='8' fill='white'/>\
+# <circle cx='70' cy='140' r='8' fill='white'/>\
+# <!-- Network connections -->\
+# <line x1='80' y1='80' x2='140' y2='70' stroke='white' stroke-width='4' stroke-linecap='round'/>\
+# <line x1='140' y1='70' x2='160' y2='120' stroke='white' stroke-width='4' stroke-linecap='round'/>\
+# <line x1='160' y1='120' x2='120' y2='150' stroke='white' stroke-width='4' stroke-linecap='round'/>\
+# <line x1='120' y1='150' x2='70' y2='140' stroke='white' stroke-width='4' stroke-linecap='round'/>\
+# <line x1='70' y1='140' x2='80' y2='80' stroke='white' stroke-width='4' stroke-linecap='round'/>\
+# <!-- Candlestick chart -->\
+# <rect x='95' y='100' width='10' height='45' fill='white' rx='2'/>\
+# <rect x='115' y='85' width='10' height='65' fill='white' rx='2'/>\
+# <rect x='135' y='105' width='10' height='40' fill='white' rx='2'/>\
+# <line x1='100' y1='90' x2='100' y2='155' stroke='white' stroke-width='4' stroke-linecap='round'/>\
+# <line x1='120' y1='70' x2='120' y2='160' stroke='white' stroke-width='4' stroke-linecap='round'/>\
+# <line x1='140' y1='95' x2='140' y2='150' stroke='white' stroke-width='4' stroke-linecap='round'/>\
+# </svg>"
 
 
 header_html = f"""
