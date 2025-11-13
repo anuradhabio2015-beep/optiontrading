@@ -149,8 +149,8 @@ with st.sidebar:
 st.markdown(header_html, unsafe_allow_html=True)
 st.write("### 👋 Welcome! Your AI-powered options trading assistant is ready.")
 
-if not gemini_key: 
-    st.stop()
+# if not gemini_key: 
+#     st.stop()
 
 # ----------------------------------------------------------
 # RUN GEMINI
