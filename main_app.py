@@ -150,7 +150,7 @@ with tab_config:
         risk_pct = st.slider("Risk % per Trade", 0.5, 5.0, 1.5)
         expiry_days = st.slider("Days to Expiry", 1, 45, 15)
 
-    run_ai = st.button("🚀 Run AI Analysis", use_container_width=true)
+    run_ai = st.button("🚀 Run AI Analysis", use_container_width=False)
 
 # ==========================================================
 # AI CALL
