@@ -23,18 +23,22 @@ st.set_page_config(
 )
 
 # ----------------------------------------------------------
-# UI CSS — COMPLETELY HIDE SIDEBAR (Groww Style)
+# CSS (Sidebar visible, everything else styled modern)
 # ----------------------------------------------------------
 UI_STYLE = """
 <style>
-/* Hide Streamlit sidebar */
-[data-testid="stSidebar"] {display: none !important;}
 header {visibility: hidden;}
 footer {visibility: hidden;}
 [data-testid="stToolbar"] {display: none;}
 
 body {
     font-family: 'Inter', sans-serif !important;
+}
+
+/* Sidebar Styling */
+[data-testid="stSidebar"] {
+    background-color: #f4f7ff !important;
+    border-right: 1px solid #e5e9f2;
 }
 
 /* Clean Header */
@@ -62,9 +66,7 @@ body {
 }
 
 /* Groww-style Tabs */
-.stTabs [data-baseweb="tab-list"] {
-    gap: 6px;
-}
+.stTabs [data-baseweb="tab-list"] { gap: 6px; }
 .stTabs [data-baseweb="tab"] {
     background-color: #f1f4ff !important;
     border-radius: 10px !important;
@@ -119,55 +121,41 @@ st.markdown(
 st.write("### 👋 Welcome! Your AI-powered option trading assistant is ready.")
 
 # ----------------------------------------------------------
-# TABS (CONFIG TAB FIRST)
+# SIDEBAR CONFIGURATION (RESTORED)
 # ----------------------------------------------------------
-tab_config, tab_market, tab_strategy, tab_backtest, tab_ai, tab_summary = st.tabs([
-    "⚙️ Configuration", 
-    "📈 Market Snapshot", 
-    "🎯 Strategy Ideas", 
-    "📊 Backtest",
-    "⚙️ AI Entry/Exit/SL",
-    "🧠 Summary"
-])
+with st.sidebar:
+    st.header("⚙️ Configuration")
 
-# ==========================================================
-# TAB 1 — CONFIG
-# ==========================================================
-with tab_config:
-    st.subheader("⚙️ Platform & Trading Settings")
+    gemini_key = st.text_input("🔑 Gemini API Key", type="password")
+    if gemini_key:
+        os.environ["GEMINI_API_KEY"] = gemini_key
+        st.success("Gemini Key Loaded")
 
-    col1, col2 = st.columns(2)
+    broker = st.selectbox("Select Broker", ["None", "Zerodha", "Groww"])
 
-    with col1:
-        gemini_key = st.text_input("🔑 Gemini API Key", type="password")
-        broker = st.selectbox("Select Broker", ["None", "Zerodha", "Groww"])
+    if broker == "Zerodha":
+        zerodha_api_key = st.text_input("Zerodha API Key", type="password")
+        zerodha_access_token = st.text_input("Zerodha Access Token", type="password")
+    else:
+        zerodha_api_key = None
+        zerodha_access_token = None
 
-        if broker == "Zerodha":
-            zerodha_api_key = st.text_input("Zerodha API Key", type="password")
-            zerodha_access_token = st.text_input("Zerodha Access Token", type="password")
-        else:
-            zerodha_api_key = None
-            zerodha_access_token = None
-
-    with col2:
-        symbol = st.selectbox("Symbol / Index", ["BANKNIFTY", "NIFTY", "RELIANCE", "HDFCBANK", "ICICIBANK"])
-        strategy_focus = st.selectbox("Strategy", ["AI-Auto", "Iron Condor", "Credit Spread", "Calendar Spread"])
-        capital = st.number_input("Capital (₹)", 100000, 20000000, 200000, step=50000)
-        risk_pct = st.slider("Risk %", 0.5, 5.0, 1.5)
-        expiry_days = st.slider("Expiry (Days)", 1, 45, 15)
+    symbol = st.selectbox("Symbol / Index", ["BANKNIFTY", "NIFTY", "RELIANCE", "HDFCBANK", "ICICIBANK"])
+    strategy_focus = st.selectbox("Strategy", ["AI-Auto", "Iron Condor", "Credit Spread", "Calendar Spread"])
+    capital = st.number_input("Capital (₹)", 100000, 20000000, 200000, step=50000)
+    risk_pct = st.slider("Risk %", 0.5, 5.0, 1.5)
+    expiry_days = st.slider("Expiry (Days)", 1, 45, 15)
 
     run_ai = st.button("🚀 Run Analysis", use_container_width=True)
 
-# ==========================================================
+# ----------------------------------------------------------
 # RUN AI
-# ==========================================================
+# ----------------------------------------------------------
 if run_ai:
-    with st.spinner(f"🤖 Running Gemini for {symbol}..."):
+    with st.spinner(f"🤖 Running Gemini AI for {symbol}..."):
         try:
             st.session_state["ai_selection"] = ai_select_stocks_gemini([symbol])
-            st.session_state["ai_summary"] = ai_market_summary_gemini(
-                st.session_state["ai_selection"]
-            )
+            st.session_state["ai_summary"] = ai_market_summary_gemini(st.session_state["ai_selection"])
         except Exception as e:
             st.error(f"Gemini Error: {e}")
             st.session_state["ai_selection"] = [{"symbol": symbol, "bias": "neutral", "strategy": "Iron Condor"}]
@@ -177,14 +165,14 @@ if "ai_selection" not in st.session_state:
 
 selection = st.session_state["ai_selection"][0]
 
-# ==========================================================
-# SAFE MARKET FETCH
-# ==========================================================
+# ----------------------------------------------------------
+# SAFE MARKET DATA FETCH
+# ----------------------------------------------------------
 def try_fetch(symbol):
     status = st.empty()
     for attempt in range(3):
         try:
-            status.info(f"Attempt {attempt+1}/3 — Fetching market data...")
+            status.info(f"Fetching data (Attempt {attempt+1}/3)...")
             indices = fetch_indices_nse()
             spot = indices.get(symbol) or fetch_spot_price(symbol)
             vix = indices.get("INDIAVIX")
@@ -192,22 +180,30 @@ def try_fetch(symbol):
             metrics = compute_core_metrics(symbol, spot, vix, oc, days=expiry_days)
             pcr = metrics.get("pcr")
             if spot and vix and pcr:
-                status.success("✔ Data Loaded")
+                status.success("✔ Market Data Loaded")
                 return spot, vix, pcr, oc, metrics
         except:
             time.sleep(1)
-    status.error("❌ Failed to fetch live market data.")
+    status.error("❌ Failed to load market data.")
     return None, None, None, None, None
 
 spot, vix, pcr, oc, metrics = try_fetch(symbol)
 if not spot: st.stop()
 
-# ==========================================================
-# TAB 2 — MARKET SNAPSHOT
-# ==========================================================
+# ----------------------------------------------------------
+# TABS
+# ----------------------------------------------------------
+tab_market, tab_strategy, tab_backtest, tab_ai, tab_summary = st.tabs([
+    "📈 Market Snapshot",
+    "🎯 Strategy Ideas",
+    "📊 Backtest",
+    "⚙️ AI Entry/Exit/SL",
+    "🧠 Summary"
+])
+
+# TAB 1: Market Snapshot
 with tab_market:
     st.subheader(f"📈 Market Snapshot — {symbol}")
-
     colA, colB, colC = st.columns(3)
     colA.metric("Spot", f"{spot:,.2f}")
     colB.metric("India VIX", f"{vix:.2f}")
@@ -216,71 +212,46 @@ with tab_market:
     st.pyplot(plot_iv_rank_history())
     st.pyplot(plot_expected_move_chart(spot, metrics))
 
-# ==========================================================
-# TAB 3 — STRATEGY IDEAS
-# ==========================================================
+# TAB 2: Strategy Ideas
 with tab_strategy:
     st.subheader("🎯 AI Strategy Ideas")
-
     strategies = build_strategies(
         symbol, oc, capital, risk_pct, metrics, days=expiry_days, focus=strategy_focus
     )
-
     st.dataframe(pd.DataFrame(strategies), use_container_width=True)
 
-    st.markdown("### 🧾 Execute Strategy")
+    st.markdown("### 🧾 Execute")
 
     if broker == "Zerodha" and zerodha_api_key:
-        st.success("Connected to Zerodha")
         for i, s in enumerate(strategies):
             if st.button(f"📤 Execute {s['Strategy']} (Zerodha)", key=f"z{i}"):
-                msg = place_order_zerodha(
-                    zerodha_api_key, zerodha_access_token, symbol,
-                    48700, "CE", "28NOV24", 25, 120
-                )
+                msg = place_order_zerodha(zerodha_api_key, zerodha_access_token, symbol, 48700, "CE", "28NOV24", 25, 120)
                 st.success(msg)
 
     elif broker == "Groww":
-        st.info("Groww Paper Mode")
         for i, s in enumerate(strategies):
             if st.button(f"💹 Paper Trade {s['Strategy']}", key=f"g{i}"):
-                msg = place_order_groww(
-                    symbol, 48700, "CE", "28NOV24", 25, 120
-                )
+                msg = place_order_groww(symbol, 48700, "CE", "28NOV24", 25, 120)
                 st.success(msg)
 
-# ==========================================================
-# TAB 4 — BACKTEST
-# ==========================================================
+# TAB 3: Backtest
 with tab_backtest:
     st.subheader("📊 Backtest Results")
-
     bt = run_detailed_backtest(symbol, strategies)
     st.dataframe(bt, use_container_width=True)
-
     if "Total Profit (₹)" in bt:
         st.line_chart(bt["Total Profit (₹)"])
 
-# ==========================================================
-# TAB 5 — AI LEVELS
-# ==========================================================
+# TAB 4: AI Entry/Exit/SL
 with tab_ai:
-    st.subheader("⚙️ AI Entry / Exit / Stop-Loss Levels")
-
-    levels = [
-        ai_trade_levels(
-            symbol, spot,
-            metrics.get("atm_iv_rank", 50),
-            metrics.get("pcr", 1.0),
-            s["Strategy"]
-        )
+    st.subheader("⚙️ AI Entry/Exit/StopLoss")
+    ai_levels = [
+        ai_trade_levels(symbol, spot, metrics.get("atm_iv_rank", 50), metrics.get("pcr", 1.0), s["Strategy"])
         for s in strategies
     ]
-    st.dataframe(pd.DataFrame(levels), use_container_width=True)
+    st.dataframe(pd.DataFrame(ai_levels), use_container_width=True)
 
-# ==========================================================
-# TAB 6 — SUMMARY
-# ==========================================================
+# TAB 5: Summary
 with tab_summary:
     st.subheader("🧠 AI Summary")
     st.write(st.session_state["ai_summary"])
