@@ -102,8 +102,6 @@ header_html = f"""
   </div>
 </div>
 """
-st.markdown(header_html, unsafe_allow_html=True)
-st.write("### 👋 Welcome! Your AI-powered options trading assistant is ready.")
 
 # ----------------------------------------------------------
 # SIDEBAR CONFIG  (FULLY FIXED & VISIBLE)
@@ -140,6 +138,9 @@ with st.sidebar:
     expiry_days = st.slider("Days to Expiry", 1, 45, 15)
 
     run_ai = st.button("🚀 Run Analysis", use_container_width=True)
+
+st.markdown(header_html, unsafe_allow_html=True)
+st.write("### 👋 Welcome! Your AI-powered options trading assistant is ready.")
 
 if not gemini_key: 
     st.stop()
