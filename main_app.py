@@ -133,7 +133,7 @@ header_html = f"""
 """
 st.markdown(header_html, unsafe_allow_html=True)
 
-st.write("### 👋 Welcome! Your AI-powered options trading assistant is ready.")
+# st.write("### 👋 Welcome! Your AI-powered options trading assistant is ready.")
 
 
 
