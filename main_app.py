@@ -18,91 +18,31 @@ st.title("SmartAppOptionTrading")
 # -------------------------------------------------------
 # REMOVE STREAMLIT DEFAULT HEADER/FOOTER
 # -------------------------------------------------------
-import streamlit as st
-
-# Robust hide/remove of Streamlit right-side menu (3-dot menu + popup)
-hide_right_menu = """
+hide_only_right_menu = """
 <style>
-/* Try to hide known menu containers via CSS first */
-div[data-testid="stToolbar"],
-div[data-testid="stToolbarActions"],
-header [data-testid="stToolbarActions"],
-div[data-testid="stActionMenuPopover"],
-header button[kind="toolbar"],
-header > div > button[title="Open app menu"],
-/* fallback generic targets (be conservative) */
-header [role="button"][aria-label*="menu"],
-header div[role="button"] {
+/* KEEP sidebar toggle visible */
+button[data-testid="baseButton-header"] {
+    display: flex !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+/* HIDE ONLY the right menu (⋮) button */
+button[data-testid="baseButton-header"][aria-label="Menu"] {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+/* HIDE the dropdown menu that appears if it ever opens */
+div[data-testid="stActionMenuPopover"] {
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;
 }
 </style>
-
-<script>
-(function() {
-  // Helper to safely hide element(s)
-  function hideSel(sel) {
-    try {
-      var els = window.document.querySelectorAll(sel);
-      els.forEach(function(el){
-        el.style.display = 'none';
-        el.style.visibility = 'hidden';
-        el.style.pointerEvents = 'none';
-      });
-    } catch(e) { /* ignore */ }
-  }
-
-  // Known selectors to remove/hide (keeps expanding)
-  var selectors = [
-    'div[data-testid="stToolbarActions"]',
-    'div[data-testid="stToolbar"]',
-    'div[data-testid="stActionMenuPopover"]',
-    'header button[kind="toolbar"]',
-    'header > div > button[title="Open app menu"]',
-    'header [role="button"][aria-label*="menu"]',
-    'header div[role="button"]'
-  ];
-
-  // Try immediately
-  selectors.forEach(hideSel);
-
-  // Also attempt to remove nodes if possible
-  function removeSel(sel) {
-    try {
-      var el = window.document.querySelector(sel);
-      if (el && el.parentNode) el.parentNode.removeChild(el);
-    } catch(e) {}
-  }
-  selectors.forEach(removeSel);
-
-  // MutationObserver: watch header area and body for dynamic insertions
-  var observer = new MutationObserver(function(mutations) {
-    selectors.forEach(function(sel){
-      hideSel(sel);
-      removeSel(sel);
-    });
-  });
-
-  try {
-    observer.observe(document, { childList: true, subtree: true });
-  } catch (e) { /* ignore */ }
-
-  // setInterval fallback (runs a few times, then stops)
-  var attempts = 0;
-  var maxAttempts = 50; // ~50 * 200ms = 10s of retries
-  var iv = setInterval(function() {
-    selectors.forEach(hideSel);
-    selectors.forEach(removeSel);
-    attempts++;
-    if (attempts >= maxAttempts) {
-      clearInterval(iv);
-    }
-  }, 200);
-})();
-</script>
 """
-st.markdown(hide_right_menu, unsafe_allow_html=True)
+st.markdown(hide_only_right_menu, unsafe_allow_html=True)
 
 
 
