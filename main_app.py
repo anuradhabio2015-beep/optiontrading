@@ -33,7 +33,8 @@ body {
     font-family: 'Inter', sans-serif !important;
 }
 
-header {visibility: hidden;}
+# header {visibility: hidden;}
+header {visibility: visible !important;}
 footer {visibility: hidden;}
 [data-testid="stToolbar"] {display: none}
 
