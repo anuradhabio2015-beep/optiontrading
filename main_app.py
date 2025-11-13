@@ -62,7 +62,6 @@ UI_STYLE = """
             padding-left: 200px;
         }
     </style>
-    <div class="header">MES Application</div>
 """
 st.markdown(UI_STYLE, unsafe_allow_html=True)
 
