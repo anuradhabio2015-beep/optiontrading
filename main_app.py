@@ -116,8 +116,89 @@ st.markdown(
 # TABS — NEW CONFIG TAB ADDED
 # ----------------------------------------------------------
 tab_config, tab_market, tab_strategy, tab_backtest, tab_ai_levels, tab_summary = st.tabs(
-    [ "📈 Market Snapshot", "🎯 Strategy Ideas", "🧮 Backtest", "⚙️ AI Levels", "🧠 Summary","⚙️Configuration"]
+    [ "⚙️Configuration","📈 Market Snapshot", "🎯 Strategy Ideas", "🧮 Backtest", "⚙️ AI Levels", "🧠 Summary"]
 )
+# ==========================================================
+# TAB 0 — CONFIGURATION  (Replacing Sidebar Completely)
+# ==========================================================
+with tab_config:
+    st.subheader("⚙️ Application & Trading Settings")
+
+    col1, col2 = st.columns(2)
+
+    # LEFT SIDE
+    with col1:
+        gemini_key = st.text_input("🔑 Gemini API Key", type="password")
+        broker = st.selectbox("Broker", ["None", "Zerodha", "Groww"])
+
+        if gemini_key:
+            os.environ["GEMINI_API_KEY"] = gemini_key
+            st.session_state["gemini_key"] = gemini_key
+
+        if broker == "Zerodha":
+            zerodha_api_key = st.text_input("Zerodha API Key", type="password")
+            zerodha_access_token = st.text_input("Zerodha Access Token", type="password")
+        else:
+            zerodha_api_key = None
+            zerodha_access_token = None
+
+    # RIGHT SIDE
+    with col2:
+        symbol = st.selectbox("Select Symbol/Index", ["BANKNIFTY", "NIFTY", "RELIANCE", "HDFCBANK", "ICICIBANK"])
+        strategy_focus = st.selectbox("Strategy Focus", ["AI-Auto", "Iron Condor", "Credit Spread", "Calendar Spread"])
+        capital = st.number_input("Portfolio Capital (₹)", 100000, 20000000, 200000, step=50000)
+        risk_pct = st.slider("Risk % per Trade", 0.5, 5.0, 1.5)
+        expiry_days = st.slider("Days to Expiry", 1, 45, 15)
+
+    run_ai = st.button("🚀 Run AI Analysis", use_container_width=false)
+
+# ==========================================================
+# AI CALL
+# ==========================================================
+if run_ai:
+    with st.spinner(f"🤖 Running Gemini for {symbol}..."):
+        try:
+            st.session_state["ai_selection"] = ai_select_stocks_gemini([symbol])
+            st.session_state["ai_summary"] = ai_market_summary_gemini(st.session_state["ai_selection"])
+        except Exception as e:
+            st.error(f"Gemini API Error: {str(e)[:120]}")
+            st.session_state["ai_selection"] = [{"symbol": symbol, "bias": "neutral", "strategy": "Iron Condor"}]
+            st.session_state["ai_summary"] = "Fallback summary due to error."
+
+if "ai_selection" not in st.session_state:
+    st.stop()
+
+selection = st.session_state["ai_selection"][0]
+
+# ==========================================================
+# MARKET DATA FETCH (Safe)
+# ==========================================================
+def try_fetch(symbol):
+    status = st.empty()
+    for attempt in range(3):
+        try:
+            status.info(f"Attempt {attempt+1}/3 — Fetching live data...")
+            indices = fetch_indices_nse()
+            spot = indices.get(symbol.upper()) or fetch_spot_price(symbol)
+            vix = indices.get("INDIAVIX")
+            oc = fetch_option_chain(symbol)
+            metrics = compute_core_metrics(symbol, spot, vix, oc, days=expiry_days)
+            pcr = metrics.get("pcr")
+
+            if spot and vix and pcr:
+                status.success("Live data loaded.")
+                return spot, vix, pcr, oc, metrics
+        except:
+            time.sleep(1)
+
+    status.error("❌ Failed to fetch data.")
+    return None, None, None, None, None
+
+spot, vix, pcr, oc, metrics = try_fetch(symbol)
+
+if not spot: st.stop()
+
+
 
 # ==========================================================
 # TAB 1 — MARKET SNAPSHOT
@@ -190,84 +271,4 @@ with tab_summary:
     st.write(st.session_state["ai_summary"])
     st.caption("⚠️ Educational use only. Not financial advice.")
 
-
-# ==========================================================
-# TAB 6 — CONFIGURATION  (Replacing Sidebar Completely)
-# ==========================================================
-with tab_config:
-    st.subheader("⚙️ Application & Trading Settings")
-
-    col1, col2 = st.columns(2)
-
-    # LEFT SIDE
-    with col1:
-        gemini_key = st.text_input("🔑 Gemini API Key", type="password")
-        broker = st.selectbox("Broker", ["None", "Zerodha", "Groww"])
-
-        if gemini_key:
-            os.environ["GEMINI_API_KEY"] = gemini_key
-            st.session_state["gemini_key"] = gemini_key
-
-        if broker == "Zerodha":
-            zerodha_api_key = st.text_input("Zerodha API Key", type="password")
-            zerodha_access_token = st.text_input("Zerodha Access Token", type="password")
-        else:
-            zerodha_api_key = None
-            zerodha_access_token = None
-
-    # RIGHT SIDE
-    with col2:
-        symbol = st.selectbox("Select Symbol/Index", ["BANKNIFTY", "NIFTY", "RELIANCE", "HDFCBANK", "ICICIBANK"])
-        strategy_focus = st.selectbox("Strategy Focus", ["AI-Auto", "Iron Condor", "Credit Spread", "Calendar Spread"])
-        capital = st.number_input("Portfolio Capital (₹)", 100000, 20000000, 200000, step=50000)
-        risk_pct = st.slider("Risk % per Trade", 0.5, 5.0, 1.5)
-        expiry_days = st.slider("Days to Expiry", 1, 45, 15)
-
-    run_ai = st.button("🚀 Run AI Analysis", use_container_width=True)
-
-# ==========================================================
-# AI CALL
-# ==========================================================
-if run_ai:
-    with st.spinner(f"🤖 Running Gemini for {symbol}..."):
-        try:
-            st.session_state["ai_selection"] = ai_select_stocks_gemini([symbol])
-            st.session_state["ai_summary"] = ai_market_summary_gemini(st.session_state["ai_selection"])
-        except Exception as e:
-            st.error(f"Gemini API Error: {str(e)[:120]}")
-            st.session_state["ai_selection"] = [{"symbol": symbol, "bias": "neutral", "strategy": "Iron Condor"}]
-            st.session_state["ai_summary"] = "Fallback summary due to error."
-
-if "ai_selection" not in st.session_state:
-    st.stop()
-
-selection = st.session_state["ai_selection"][0]
-
-# ==========================================================
-# MARKET DATA FETCH (Safe)
-# ==========================================================
-def try_fetch(symbol):
-    status = st.empty()
-    for attempt in range(3):
-        try:
-            status.info(f"Attempt {attempt+1}/3 — Fetching live data...")
-            indices = fetch_indices_nse()
-            spot = indices.get(symbol.upper()) or fetch_spot_price(symbol)
-            vix = indices.get("INDIAVIX")
-            oc = fetch_option_chain(symbol)
-            metrics = compute_core_metrics(symbol, spot, vix, oc, days=expiry_days)
-            pcr = metrics.get("pcr")
-
-            if spot and vix and pcr:
-                status.success("Live data loaded.")
-                return spot, vix, pcr, oc, metrics
-        except:
-            time.sleep(1)
-
-    status.error("❌ Failed to fetch data.")
-    return None, None, None, None, None
-
-spot, vix, pcr, oc, metrics = try_fetch(symbol)
-
-if not spot: st.stop()
 
