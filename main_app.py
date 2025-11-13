@@ -23,76 +23,47 @@ st.set_page_config(
     layout="wide"
 )
 
+# -------------------------------------------------------
+# REMOVE STREAMLIT DEFAULT HEADER/FOOTER
+# -------------------------------------------------------
+hide_default = """
+    <style>
+        #MainMenu {visibility: hidden;}
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+    </style>
+"""
+st.markdown(hide_default, unsafe_allow_html=True)
+
 
 # ----------------------------------------------------------
 # CLEAN, FIXED UI CSS
 # ----------------------------------------------------------
 UI_STYLE = """
-<style>
-
-header {visibility: hidden;}
-footer {visibility: hidden;}
-[data-testid="stToolbar"] {display: none;}
-
-body {
-    font-family: 'Inter', sans-serif !important;
-}
-
-/* --- Sidebar visible & styled --- */
-[data-testid="stSidebar"] {
-    background-color: #f4f7ff !important;
-    border-right: 1px solid #e5e9f2;
-    padding-top: 20px !important;
-}
-
-/* --- Header Styling --- */
-.custom-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 14px 20px;
-  border-radius: 14px;
-  margin-bottom: 14px;
-  background: linear-gradient(90deg, #ffffff, #e7f0ff);
-  box-shadow: 0 8px 24px rgba(20,20,60,0.06);
-}
-
-.custom-header .title {
-  font-size: 28px;
-  font-weight: 800;
-  margin: 0;
-}
-
-.custom-header .subtitle {
-  font-size: 14px;
-  color: #555;
-  margin: 0;
-}
-
-/* --- Groww-style Tabs --- */
-.stTabs [data-baseweb="tab-list"] {
-    gap: 6px;
-}
-
-.stTabs [data-baseweb="tab"] {
-    background-color: #f1f4ff !important;
-    border-radius: 10px !important;
-    padding: 8px 16px !important;
-    font-weight: 500;
-}
-
-/* --- Selected (Active) Tab --- */
-/* 👇 Your custom Groww-like color */
-.stTabs [aria-selected="true"] {
-    background-color: #2c6bed !important;
-    color: white !important;
-    font-weight: 600 !important;
-    border: 1px solid #2c6bed !important;
-}
-
-</style>
+ <style>
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: #2c6bed;
+            color: white;
+            padding-left: 20px;
+            display: flex;
+            align-items: center;
+            font-size: 22px;
+            font-weight: 700;
+            z-index: 999;
+            box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
+        }
+        .content {
+            padding-top: 80px;
+            padding-left: 200px;
+        }
+    </style>
+    <div class="header">MES Application</div>
 """
-
 st.markdown(UI_STYLE, unsafe_allow_html=True)
 
 # ----------------------------------------------------------
