@@ -33,45 +33,32 @@ body {
     font-family: 'Inter', sans-serif !important;
 }
 
+/* FIX 1 — Do NOT override section.main because it breaks sidebar */
 section.main > div {
-    padding-top: 0rem;
+    padding-top: 12px !important;
 }
 
-.sidebar .sidebar-content {
-    background-color: #f9faff !important;
-}
-
+/* FIX 2 — Limit sticky header to the header only, not the whole container */
 .custom-header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 16px 26px;
-  border-radius: 14px;
-  margin-bottom: 14px;
-  background: linear-gradient(90deg, #ffffff, #eef3ff);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 999;
 }
 
-.custom-header .title {
-  font-size: 28px;
-  font-weight: 800;
-  margin: 0;
-  padding: 0;
+/* FIX 3 — Sidebar padding fix */
+[data-testid="stSidebar"] {
+    background-color: #f6f7ff !important;
+    padding-top: 20px !important;
 }
 
-.custom-header .subtitle {
-  font-size: 14px;
-  color: #555;
-  margin: 0;
+/* Sidebar text and spacing */
+[data-testid="stSidebar"] .block-container {
+    padding: 20px 16px;
 }
 
-.sidebar .sidebar-content {
-    padding: 20px;
-    border-right: 1px solid #ececec;
-}
-
+/* TABS STYLING */
 .stTabs [data-baseweb="tab-list"] {
-    gap: 4px;
+    gap: 6px;
 }
 
 .stTabs [data-baseweb="tab"] {
@@ -83,16 +70,17 @@ section.main > div {
 .stTabs [aria-selected="true"] {
     background-color: #2c6bed !important;
     color: white !important;
-    font-weight: 600;
+    font-weight: 600 !important;
 }
 
 /* Hide Streamlit default header/footer */
-header {visibility: hidden;}
-footer {visibility: hidden;}
-[data-testid="stToolbar"] {display: none}
+header {visibility: hidden !important;}
+footer {visibility: hidden !important;}
+[data-testid="stToolbar"] {display: none !important;}
 
 </style>
 """
+
 st.markdown(UI_STYLE, unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
