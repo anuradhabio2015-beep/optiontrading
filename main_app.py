@@ -18,32 +18,42 @@ st.title("SmartAppOptionTrading")
 # -------------------------------------------------------
 # REMOVE STREAMLIT DEFAULT HEADER/FOOTER
 # -------------------------------------------------------
-hide_only_right_menu = """
+hide_all_right_icons = """
 <style>
-/* KEEP sidebar toggle visible */
-button[data-testid="baseButton-header"] {
-    display: flex !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-}
 
-/* HIDE ONLY the right menu (⋮) button */
-button[data-testid="baseButton-header"][aria-label="Menu"] {
-    display: none !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-}
+    /* KEEP sidebar toggle button visible */
+    button[data-testid="baseButton-header"][aria-label="Toggle sidebar"] {
+        display: inline-flex !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+    }
 
-/* HIDE the dropdown menu that appears if it ever opens */
-div[data-testid="stActionMenuPopover"] {
-    display: none !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-}
+    /* HIDE all other header buttons on the right */
+    header button[data-testid="baseButton-header"]:not([aria-label="Toggle sidebar"]) {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+
+    /* HIDE the Share section (text + icon) */
+    div[data-testid="stHeaderActionShare"] {
+        display: none !important;
+    }
+
+    /* HIDE all individual header actions group */
+    div[data-testid="stHeaderActions"] {
+        display: none !important;
+    }
+
+    /* HIDE the 3-dot action menu if it appears */
+    div[data-testid="stActionMenuPopover"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
 </style>
 """
-st.markdown(hide_only_right_menu, unsafe_allow_html=True)
-
+st.markdown(hide_all_right_icons, unsafe_allow_html=True)
 
 
 
