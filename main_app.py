@@ -181,7 +181,7 @@ def try_fetch_data(symbol):
             metrics = compute_core_metrics(symbol, spot, vix, oc, r=rfr, days=expiry_days)
             pcr = metrics.get("pcr") if metrics else None
             if spot and vix and pcr:
-                status.success("Data Loaded")
+                status.success(f"✅ Market data fetched successfully (Spot={spot:.2f}, VIX={vix:.2f}, PCR={round(pcr, 2)})")
                 return spot, vix, pcr, oc, metrics
         except:
             time.sleep(1)
