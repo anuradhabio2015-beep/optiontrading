@@ -30,30 +30,31 @@ st.set_page_config(
 UI_STYLE = """
 <style>
 
+header {visibility: hidden;}
+footer {visibility: hidden;}
+[data-testid="stToolbar"] {display: none;}
+
 body {
     font-family: 'Inter', sans-serif !important;
 }
 
-header {visibility: hidden;}
-# header {visibility: visible !important;}
-footer {visibility: hidden;}
-[data-testid="stToolbar"] {display: none}
-
+/* --- Sidebar visible & styled --- */
 [data-testid="stSidebar"] {
-    background-color: #f8f9ff !important;
-    padding: 14px !important;
-    border-right: 1px solid #e6e6e6;
+    background-color: #f4f7ff !important;
+    border-right: 1px solid #e5e9f2;
+    padding-top: 20px !important;
 }
 
+/* --- Header Styling --- */
 .custom-header {
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 16px 26px;
+  gap: 16px;
+  padding: 14px 20px;
   border-radius: 14px;
   margin-bottom: 14px;
-  background: linear-gradient(90deg, #ffffff, #eef3ff);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  background: linear-gradient(90deg, #ffffff, #e7f0ff);
+  box-shadow: 0 8px 24px rgba(20,20,60,0.06);
 }
 
 .custom-header .title {
@@ -68,24 +69,30 @@ footer {visibility: hidden;}
   margin: 0;
 }
 
+/* --- Groww-style Tabs --- */
 .stTabs [data-baseweb="tab-list"] {
-    gap: 4px;
+    gap: 6px;
 }
 
 .stTabs [data-baseweb="tab"] {
     background-color: #f1f4ff !important;
-    border-radius: 8px !important;
-    padding: 6px 14px !important;
+    border-radius: 10px !important;
+    padding: 8px 16px !important;
+    font-weight: 500;
 }
 
+/* --- Selected (Active) Tab --- */
+/* 👇 Your custom Groww-like color */
 .stTabs [aria-selected="true"] {
     background-color: #2c6bed !important;
     color: white !important;
-    font-weight: 600;
+    font-weight: 600 !important;
+    border: 1px solid #2c6bed !important;
 }
 
 </style>
 """
+
 st.markdown(UI_STYLE, unsafe_allow_html=True)
 
 # ----------------------------------------------------------
