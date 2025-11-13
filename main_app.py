@@ -14,6 +14,80 @@ from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 from modules.order_executor import place_order_groww, place_order_zerodha
 
 # ----------------------------------------------------------
+# PAGE CONFIG
+# ----------------------------------------------------------
+st.set_page_config(
+    page_title="Smart Trading App",
+    page_icon="💹",
+    layout="wide"
+)
+
+# ----------------------------------------------------------
+# CLEAN, FIXED UI CSS
+# ----------------------------------------------------------
+UI_STYLE = """
+<style>
+
+body {
+    font-family: 'Inter', sans-serif !important;
+}
+
+header {visibility: hidden;}
+# header {visibility: visible !important;}
+footer {visibility: hidden;}
+[data-testid="stToolbar"] {display: none}
+
+[data-testid="stSidebar"] {
+    background-color: #f8f9ff !important;
+    padding: 14px !important;
+    border-right: 1px solid #e6e6e6;
+}
+
+.custom-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 26px;
+  border-radius: 14px;
+  margin-bottom: 14px;
+  background: linear-gradient(90deg, #ffffff, #eef3ff);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+.custom-header .title {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.custom-header .subtitle {
+  font-size: 14px;
+  color: #555;
+  margin: 0;
+}
+
+.stTabs [data-baseweb="tab-list"] {
+    gap: 4px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    background-color: #f1f4ff !important;
+    border-radius: 8px !important;
+    padding: 6px 14px !important;
+}
+
+.stTabs [aria-selected="true"] {
+    background-color: #2c6bed !important;
+    color: white !important;
+    font-weight: 600;
+}
+
+</style>
+"""
+st.markdown(UI_STYLE, unsafe_allow_html=True)
+
+
+# ----------------------------------------------------------
 # CUSTOM HEADER
 # ----------------------------------------------------------
 LOGO_URL = "https://placehold.co/80x80/png?text=LOGO"
@@ -102,78 +176,6 @@ with st.sidebar:
 if not gemini_key: 
     st.stop()
 
-# ----------------------------------------------------------
-# PAGE CONFIG
-# ----------------------------------------------------------
-st.set_page_config(
-    page_title="Smart Trading App",
-    page_icon="💹",
-    layout="wide"
-)
-
-# ----------------------------------------------------------
-# CLEAN, FIXED UI CSS
-# ----------------------------------------------------------
-UI_STYLE = """
-<style>
-
-body {
-    font-family: 'Inter', sans-serif !important;
-}
-
-header {visibility: hidden;}
-# header {visibility: visible !important;}
-footer {visibility: hidden;}
-[data-testid="stToolbar"] {display: none}
-
-[data-testid="stSidebar"] {
-    background-color: #f8f9ff !important;
-    padding: 14px !important;
-    border-right: 1px solid #e6e6e6;
-}
-
-.custom-header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 16px 26px;
-  border-radius: 14px;
-  margin-bottom: 14px;
-  background: linear-gradient(90deg, #ffffff, #eef3ff);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-}
-
-.custom-header .title {
-  font-size: 28px;
-  font-weight: 800;
-  margin: 0;
-}
-
-.custom-header .subtitle {
-  font-size: 14px;
-  color: #555;
-  margin: 0;
-}
-
-.stTabs [data-baseweb="tab-list"] {
-    gap: 4px;
-}
-
-.stTabs [data-baseweb="tab"] {
-    background-color: #f1f4ff !important;
-    border-radius: 8px !important;
-    padding: 6px 14px !important;
-}
-
-.stTabs [aria-selected="true"] {
-    background-color: #2c6bed !important;
-    color: white !important;
-    font-weight: 600;
-}
-
-</style>
-"""
-st.markdown(UI_STYLE, unsafe_allow_html=True)
 
 # ----------------------------------------------------------
 # RUN GEMINI
