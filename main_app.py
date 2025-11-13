@@ -13,16 +13,6 @@ from modules.ai_trade_levels import ai_trade_levels
 from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 from modules.order_executor import place_order_groww, place_order_zerodha
 
-
-# ----------------------------------------------------------
-# PAGE CONFIG
-# ----------------------------------------------------------
-st.set_page_config(
-    page_title="Smart Trading App",
-    page_icon="💹",
-    layout="wide"
-)
-
 # ----------------------------------------------------------
 # CUSTOM HEADER
 # ----------------------------------------------------------
@@ -112,6 +102,14 @@ with st.sidebar:
 if not gemini_key: 
     st.stop()
 
+# ----------------------------------------------------------
+# PAGE CONFIG
+# ----------------------------------------------------------
+st.set_page_config(
+    page_title="Smart Trading App",
+    page_icon="💹",
+    layout="wide"
+)
 
 # ----------------------------------------------------------
 # CLEAN, FIXED UI CSS
