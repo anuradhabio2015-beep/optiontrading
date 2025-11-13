@@ -87,6 +87,46 @@ footer {visibility: hidden;}
 st.markdown(UI_STYLE, unsafe_allow_html=True)
 
 
+
+# ----------------------------------------------------------
+# SIDEBAR CONFIG  (FULLY FIXED & VISIBLE)
+# ----------------------------------------------------------
+with st.sidebar:
+    st.header("⚙️ Configuration Settings")
+
+    gemini_key = st.text_input("🔑 Gemini API Key", type="password")
+    if gemini_key:
+        os.environ["GEMINI_API_KEY"] = gemini_key
+        st.success("Gemini Key Loaded")
+    else:
+        st.warning("Enter Gemini API Key")
+
+    st.markdown("### 🏦 Broker Settings")
+    broker = st.radio("Select Broker", ["None", "Zerodha", "Groww"], index=0)
+
+    if broker == "Zerodha":
+        zerodha_api_key = st.text_input("Zerodha API Key", type="password")
+        zerodha_access_token = st.text_input("Access Token", type="password")
+
+    elif broker == "Groww":
+        st.info("Groww works in **paper mode** only.")
+
+    st.markdown("### 📊 Trading Inputs")
+
+    default_universe = ["BANKNIFTY", "NIFTY", "RELIANCE", "HDFCBANK", "ICICIBANK"]
+    symbol = st.selectbox("Select Symbol / Index", default_universe)
+
+    strategy_focus = st.selectbox("Strategy Type", ["AI-Auto", "Iron Condor", "Credit Spread", "Calendar Spread"])
+    capital = st.number_input("Portfolio Capital (₹)", 100000, 20000000, 200000, step=50000)
+    risk_pct = st.slider("Risk % per Trade", 0.5, 5.0, 1.5)
+    rfr = st.number_input("Risk-Free Rate", 0.0, 0.2, 0.07)
+    expiry_days = st.slider("Days to Expiry", 1, 45, 15)
+
+    run_ai = st.button("🚀 Run Analysis", use_container_width=True)
+
+if not gemini_key: 
+    st.stop()
+
 # ----------------------------------------------------------
 # CUSTOM HEADER
 # ----------------------------------------------------------
@@ -136,45 +176,6 @@ st.markdown(header_html, unsafe_allow_html=True)
 
 st.write("### 👋 Welcome! Your AI-powered options trading assistant is ready.")
 
-
-# ----------------------------------------------------------
-# SIDEBAR CONFIG  (FULLY FIXED & VISIBLE)
-# ----------------------------------------------------------
-with st.sidebar:
-    st.header("⚙️ Configuration Settings")
-
-    gemini_key = st.text_input("🔑 Gemini API Key", type="password")
-    if gemini_key:
-        os.environ["GEMINI_API_KEY"] = gemini_key
-        st.success("Gemini Key Loaded")
-    else:
-        st.warning("Enter Gemini API Key")
-
-    st.markdown("### 🏦 Broker Settings")
-    broker = st.radio("Select Broker", ["None", "Zerodha", "Groww"], index=0)
-
-    if broker == "Zerodha":
-        zerodha_api_key = st.text_input("Zerodha API Key", type="password")
-        zerodha_access_token = st.text_input("Access Token", type="password")
-
-    elif broker == "Groww":
-        st.info("Groww works in **paper mode** only.")
-
-    st.markdown("### 📊 Trading Inputs")
-
-    default_universe = ["BANKNIFTY", "NIFTY", "RELIANCE", "HDFCBANK", "ICICIBANK"]
-    symbol = st.selectbox("Select Symbol / Index", default_universe)
-
-    strategy_focus = st.selectbox("Strategy Type", ["AI-Auto", "Iron Condor", "Credit Spread", "Calendar Spread"])
-    capital = st.number_input("Portfolio Capital (₹)", 100000, 20000000, 200000, step=50000)
-    risk_pct = st.slider("Risk % per Trade", 0.5, 5.0, 1.5)
-    rfr = st.number_input("Risk-Free Rate", 0.0, 0.2, 0.07)
-    expiry_days = st.slider("Days to Expiry", 1, 45, 15)
-
-    run_ai = st.button("🚀 Run Analysis", use_container_width=True)
-
-if not gemini_key: 
-    st.stop()
 
 
 # ----------------------------------------------------------
