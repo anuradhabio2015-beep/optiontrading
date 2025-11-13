@@ -12,8 +12,80 @@ from modules.backtester import run_detailed_backtest
 from modules.ai_trade_levels import ai_trade_levels
 from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 
-st.set_page_config(page_title="Smart Option Selling", layout="wide")
-st.title("SmartAppOptionTrading")
+
+# Page config
+st.set_page_config(page_title="My App", page_icon=":sparkles:", layout="wide")
+
+# === Hide default Streamlit header/menu/footer ===
+HIDE_STEAMLIT_STYLE = """
+<style>
+/* Hide the top header (Streamlit logo) */
+header {visibility: hidden;}
+/* Hide the hamburger menu and "Made with Streamlit" footer */
+footer {visibility: hidden;}
+/* Optional: hide the toolbar in newer Streamlit versions */
+[data-testid="stToolbar"] {display: none}
+</style>
+"""
+st.markdown(HIDE_STEAMLIT_STYLE, unsafe_allow_html=True)
+
+# === Custom header ===
+# You can replace the logo path with a URL or local file (e.g., "./assets/logo.png")
+LOGO_PATH = "https://placehold.co/80x80/png?text=Logo"  # replace with your logo
+
+CUSTOM_HEADER_STYLE = """
+<style>
+.custom-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(250,250,255,0.6));
+}
+.custom-header .title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+}
+.custom-header .subtitle {
+  font-size: 13px;
+  color: #555;
+  margin: 0;
+}
+/* Make header sticky at top (optional) */
+.stApp > div:first-child {
+  position: sticky;
+  top: 8px;
+  z-index: 999;
+}
+</style>
+"""
+
+st.markdown(CUSTOM_HEADER_STYLE, unsafe_allow_html=True)
+
+header_html = f"""
+<div class="custom-header">
+  <img src="{LOGO_PATH}" width="64" height="64" style="border-radius:12px;"/>
+  <div>
+    <p class="title">Smart Trading App</p>
+    <p class="subtitle">AI-Powered Options Trading Assistant for Smarter, Safer Decisions.</p>
+  </div>
+  <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+    <!-- Add small action buttons/links -->
+    <a href="#" target="_self">Docs</a>
+    <a href="#" target="_self">Support</a>
+  </div>
+</div>
+"""
+
+st.markdown(header_html, unsafe_allow_html=True)
+
+# === Rest of app content ===
+st.write("Welcome! Your AI-powered options trading assistant is ready. Analyze markets, explore strategies, and execute smarter trades — all in one place.")
+
+# Add Code Here
 
 # ----------------------------------------------------------------
 # Sidebar Configuration
@@ -78,8 +150,6 @@ selection = st.session_state["ai_selection"][0]
 # vix = indices.get("INDIAVIX", 14.0)
 # oc = fetch_option_chain(symbol)
 # metrics = compute_core_metrics(symbol, spot, vix, oc, r=rfr, days=expiry_days)
-
-import time
 
 # --- Retry logic for critical market data ---
 def try_fetch_data(symbol, retries=3, delay=2):
@@ -211,3 +281,10 @@ with tab_summary:
     st.subheader("🧠 AI Summary & Insights")
     st.write(st.session_state["ai_summary"])
     st.caption("⚠️ Educational use only. Not financial advice.")
+
+
+# Notes for customization (keep these comments in the file):
+# - Replace LOGO_PATH with your logo file or URL. For a local file, use st.image('./assets/logo.png') instead.
+# - Tweak CSS in CUSTOM_HEADER_STYLE to change colors, spacing, or make the header full-width.
+# - If Streamlit updates its DOM structure, the CSS selectors (header, footer, [data-testid]) may need adjustment.
+# - For accessibility, ensure alt text and semantic HTML if you expand the header.
