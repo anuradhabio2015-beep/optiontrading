@@ -20,6 +20,12 @@ st.title("SmartAppOptionTrading")
 # -------------------------------------------------------
 css = """
 <style>
+
+/* Hide the 3-dot menu button */
+div[data-testid="stToolbarActions"] {
+    display: none !important;
+}
+
 /* Hide any top-right menu buttons */
 header button[kind="toolbar"] {
     display: none !important;
