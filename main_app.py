@@ -110,13 +110,13 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.write("### 👋 Welcome! Your AI-powered options trading assistant is ready.")
+# st.write("### 👋 Welcome! Your AI-powered options trading assistant is ready.")
 
 # ----------------------------------------------------------
 # TABS — NEW CONFIG TAB ADDED
 # ----------------------------------------------------------
 tab_config, tab_market, tab_strategy, tab_backtest, tab_ai_levels, tab_summary = st.tabs(
-    ["⚙️ Configuration", "📈 Market Snapshot", "🎯 Strategy Ideas", "🧮 Backtest", "⚙️ AI Levels", "🧠 Summary"]
+    [ "📈 Market Snapshot", "🎯 Strategy Ideas", "🧮 Backtest", "⚙️ AI Levels", "🧠 Summary","⚙️Configuration"]
 )
 
 # ==========================================================
