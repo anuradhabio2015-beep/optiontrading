@@ -120,7 +120,79 @@ tab_config, tab_market, tab_strategy, tab_backtest, tab_ai_levels, tab_summary =
 )
 
 # ==========================================================
-# TAB 1 — CONFIGURATION  (Replacing Sidebar Completely)
+# TAB 1 — MARKET SNAPSHOT
+# ==========================================================
+with tab_market:
+    st.subheader(f"📈 Market Snapshot — {symbol}")
+
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Spot", f"{spot:,.2f}")
+    c2.metric("India VIX", f"{vix:.2f}")
+    c3.metric("PCR (OI)", f"{pcr:.2f}")
+
+    st.pyplot(plot_iv_rank_history())
+    st.pyplot(plot_expected_move_chart(spot, metrics))
+
+# ==========================================================
+# TAB 2 — STRATEGIES
+# ==========================================================
+with tab_strategy:
+    st.subheader("🎯 AI Strategy Suggestions")
+    strategies = build_strategies(symbol, oc, capital, risk_pct, metrics, days=expiry_days, focus=strategy_focus)
+    st.dataframe(pd.DataFrame(strategies), use_container_width=True)
+
+    st.markdown("### Order Execution")
+
+    if broker == "Zerodha" and zerodha_api_key:
+        st.success("Zerodha Connected")
+
+        for i, strat in enumerate(strategies):
+            if st.button(f"📤 Place {strat['Strategy']} (Zerodha)", key=f"ord_z_{i}"):
+                msg = place_order_zerodha(
+                    zerodha_api_key, zerodha_access_token, symbol,
+                    48700, "CE", "28NOV24", 25, 120
+                )
+                st.success(msg)
+
+    elif broker == "Groww":
+        st.info("Groww Paper Trading Mode")
+        for i, strat in enumerate(strategies):
+            if st.button(f"💹 Paper Trade {strat['Strategy']}", key=f"ord_g_{i}"):
+                msg = place_order_groww(symbol, 48700, "CE", "28NOV24", 25, 120)
+                st.success(msg)
+
+# ==========================================================
+# TAB 3 — BACKTEST
+# ==========================================================
+with tab_backtest:
+    st.subheader("🧮 Backtest Results")
+    bt = run_detailed_backtest(symbol, strategies)
+    st.dataframe(bt, use_container_width=True)
+    if "Total Profit (₹)" in bt:
+        st.line_chart(bt["Total Profit (₹)"])
+
+# ==========================================================
+# TAB 4 — AI LEVELS
+# ==========================================================
+with tab_ai_levels:
+    st.subheader("⚙️ AI Entry / Exit / Stop-Loss Levels")
+    ai_levels = [
+        ai_trade_levels(symbol, spot, metrics.get("atm_iv_rank", 50), metrics.get("pcr", 1.0), strat["Strategy"])
+        for strat in strategies
+    ]
+    st.dataframe(pd.DataFrame(ai_levels), use_container_width=True)
+
+# ==========================================================
+# TAB 5 — SUMMARY
+# ==========================================================
+with tab_summary:
+    st.subheader("🧠 AI Summary & Insights")
+    st.write(st.session_state["ai_summary"])
+    st.caption("⚠️ Educational use only. Not financial advice.")
+
+
+# ==========================================================
+# TAB 6 — CONFIGURATION  (Replacing Sidebar Completely)
 # ==========================================================
 with tab_config:
     st.subheader("⚙️ Application & Trading Settings")
@@ -199,73 +271,3 @@ spot, vix, pcr, oc, metrics = try_fetch(symbol)
 
 if not spot: st.stop()
 
-# ==========================================================
-# TAB 2 — MARKET SNAPSHOT
-# ==========================================================
-with tab_market:
-    st.subheader(f"📈 Market Snapshot — {symbol}")
-
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Spot", f"{spot:,.2f}")
-    c2.metric("India VIX", f"{vix:.2f}")
-    c3.metric("PCR (OI)", f"{pcr:.2f}")
-
-    st.pyplot(plot_iv_rank_history())
-    st.pyplot(plot_expected_move_chart(spot, metrics))
-
-# ==========================================================
-# TAB 3 — STRATEGIES
-# ==========================================================
-with tab_strategy:
-    st.subheader("🎯 AI Strategy Suggestions")
-    strategies = build_strategies(symbol, oc, capital, risk_pct, metrics, days=expiry_days, focus=strategy_focus)
-    st.dataframe(pd.DataFrame(strategies), use_container_width=True)
-
-    st.markdown("### Order Execution")
-
-    if broker == "Zerodha" and zerodha_api_key:
-        st.success("Zerodha Connected")
-
-        for i, strat in enumerate(strategies):
-            if st.button(f"📤 Place {strat['Strategy']} (Zerodha)", key=f"ord_z_{i}"):
-                msg = place_order_zerodha(
-                    zerodha_api_key, zerodha_access_token, symbol,
-                    48700, "CE", "28NOV24", 25, 120
-                )
-                st.success(msg)
-
-    elif broker == "Groww":
-        st.info("Groww Paper Trading Mode")
-        for i, strat in enumerate(strategies):
-            if st.button(f"💹 Paper Trade {strat['Strategy']}", key=f"ord_g_{i}"):
-                msg = place_order_groww(symbol, 48700, "CE", "28NOV24", 25, 120)
-                st.success(msg)
-
-# ==========================================================
-# TAB 4 — BACKTEST
-# ==========================================================
-with tab_backtest:
-    st.subheader("🧮 Backtest Results")
-    bt = run_detailed_backtest(symbol, strategies)
-    st.dataframe(bt, use_container_width=True)
-    if "Total Profit (₹)" in bt:
-        st.line_chart(bt["Total Profit (₹)"])
-
-# ==========================================================
-# TAB 5 — AI LEVELS
-# ==========================================================
-with tab_ai_levels:
-    st.subheader("⚙️ AI Entry / Exit / Stop-Loss Levels")
-    ai_levels = [
-        ai_trade_levels(symbol, spot, metrics.get("atm_iv_rank", 50), metrics.get("pcr", 1.0), strat["Strategy"])
-        for strat in strategies
-    ]
-    st.dataframe(pd.DataFrame(ai_levels), use_container_width=True)
-
-# ==========================================================
-# TAB 6 — SUMMARY
-# ==========================================================
-with tab_summary:
-    st.subheader("🧠 AI Summary & Insights")
-    st.write(st.session_state["ai_summary"])
-    st.caption("⚠️ Educational use only. Not financial advice.")
