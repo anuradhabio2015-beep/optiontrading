@@ -18,27 +18,20 @@ st.title("SmartAppOptionTrading")
 # -------------------------------------------------------
 # REMOVE STREAMLIT DEFAULT HEADER/FOOTER
 # -------------------------------------------------------
-css = """
+hide_streamlit_menu = """
 <style>
-
 /* Hide the 3-dot menu button */
 div[data-testid="stToolbarActions"] {
     display: none !important;
 }
 
-/* Hide any top-right menu buttons */
-header button[kind="toolbar"] {
-    display: none !important;
-}
-header div[data-testid="stToolbarActions"] {
-    display: none !important;
-}
-header div[role="button"] {
+/* Hide the dropdown menu that appears when clicked */
+div[data-testid="stActionMenuPopover"] {
     display: none !important;
 }
 </style>
 """
-st.markdown(css, unsafe_allow_html=True)
+st.markdown(hide_streamlit_menu, unsafe_allow_html=True)
 
 
 
