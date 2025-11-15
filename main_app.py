@@ -41,6 +41,8 @@ custom_css = """
         height: 60px !important;
         padding-left: 20px !important;
     }
+    <!-- Inject custom header elements -->
+    <div class="custom-left-title">SmartAppOptionTrading</div>
 
     /* ADD CUSTOM TEXT ON RIGHT SIDE */
     .custom-right-header {
@@ -74,8 +76,6 @@ custom_css = """
 
 </style>
 
-<!-- Inject custom header elements -->
-<div class="custom-left-title">SmartAppOptionTrading</div>
 """
 
 st.markdown(custom_css, unsafe_allow_html=True)
