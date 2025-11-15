@@ -90,9 +90,9 @@ function injectHeaderContent() {
     // LOGO
     const logo = document.createElement('img');
     logo.src = "https://cdn-icons-png.flaticon.com/512/4727/4727531.png";   // UPDATE if needed
-    logo.style.height = "40px";
-    logo.style.width = "40px";
-    logo.style.borderRadius = "6px";
+    logo.style.height = "50px";
+    logo.style.width = "50px";
+    logo.style.borderRadius = "10px";
 
     // Title+Description vertical column
     const textBox = document.createElement('div');
