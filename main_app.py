@@ -74,7 +74,7 @@ function addSmartAppTitle() {
     if (!header.querySelector('.smartapp-title')) {
         const div = document.createElement('div');
         div.className = 'smartapp-title';
-        div.innerHTML = "SmartApp";
+        div.innerHTML = "SmartAppOptionTrading";
         div.style.position = "absolute";
         div.style.left = "60px";     // avoid sidebar toggle
         div.style.top = "15px";
