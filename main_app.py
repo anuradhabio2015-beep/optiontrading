@@ -91,14 +91,14 @@ function injectHeaderContent() {
     const row = document.createElement('div');
     row.style.display = "flex";
     row.style.alignItems = "center";
-    row.style.gap = "5px";
+    row.style.gap = "500px";
 
     // LOGO
     const logo = document.createElement('img');
     logo.src = "https://cdn-icons-png.flaticon.com/512/4727/4727531.png";  // <-- CHANGE PATH IF NEEDED
     logo.style.height = "50px";
     logo.style.width = "50px";
-    logo.style.borderRadius = "100px";
+    logo.style.borderRadius = "10px";
 
     // TITLE
     const title = document.createElement('div');
