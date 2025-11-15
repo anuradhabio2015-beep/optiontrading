@@ -53,7 +53,7 @@ custom_css = """
         z-index: 9999;
     }
 
-<div class="custom-left-title">SmartAppOptionTrading</div>;
+<div class="custom-left-title">SmartAppOptionTrading</div>
 
     /* Footer styling */
     .custom-footer {
