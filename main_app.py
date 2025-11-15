@@ -15,30 +15,46 @@ from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 st.set_page_config(page_title="Smart Option Selling", layout="wide")
 st.title("SmartAppOptionTrading")
 
-hide_toolbar_151 = """
+# -------------------------------------------------------
+# HIDE ENTIRE STREAMLIT HEADER (VERSION 1.51.0)
+# -------------------------------------------------------
+hide_full_header_151 = """
 <style>
-/* Hide ONLY the right side toolbar (Share, Star, GitHub, ⋮ menu, all icons) */
-header div[data-testid="stAppHeaderActions"] {
-    display: none !important;
-    visibility: hidden !important;
-}
 
-/* Hide the dropdown menu if already open */
-div[data-testid="stActionMenuPopover"] {
-    display: none !important;
-    visibility: hidden !important;
-}
+    /* Completely hide the ENTIRE Streamlit header */
+    header[data-testid="stHeader"] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        position: fixed !important;
+        top: -100px !important;
+    }
 
-/* KEEP sidebar toggle button working */
-button[data-testid="baseButton-header"][aria-label="Toggle sidebar"] {
-    display: flex !important;
-    pointer-events: auto !important;
-    visibility: visible !important;
-}
+    /* Hide all top toolbars (new Streamlit 1.51.0 structure) */
+    div[data-testid="stAppHeader"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    div[data-testid="stAppHeaderActions"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* Hide 3-dot menu popover if it somehow renders */
+    div[data-testid="stActionMenuPopover"] {
+        display: none !important;
+    }
+
+    /* Push content down slightly to avoid overlap */
+    .block-container {
+        padding-top: 20px !important;
+    }
+
 </style>
 """
 
-st.markdown(hide_toolbar_151, unsafe_allow_html=True)
+st.markdown(hide_full_header_151, unsafe_allow_html=True)
 
 
 
