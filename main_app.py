@@ -76,59 +76,58 @@ function injectHeaderContent() {
 
     if (header.querySelector('.smartapp-container')) return;
 
-    // Container wrapper
+    // Outer wrapper
     const container = document.createElement('div');
     container.className = 'smartapp-container';
     container.style.position = "absolute";
-    container.style.left = "60px";        // right of sidebar toggle
-    container.style.top = "2px";
+    container.style.left = "60px";
+    container.style.top = "10px";
     container.style.display = "flex";
-    container.style.flexDirection = "column";
-    container.style.gap = "2px";
+    container.style.alignItems = "center";
+    container.style.gap = "12px";
     container.style.zIndex = "9999";
-
-    // Row for logo + title
-    const row = document.createElement('div');
-    row.style.display = "flex";
-    row.style.alignItems = "center";
-    row.style.gap = "0px";
 
     // LOGO
     const logo = document.createElement('img');
-    logo.src = "https://cdn-icons-png.flaticon.com/512/4727/4727531.png";  // <-- CHANGE PATH IF NEEDED
-    logo.style.height = "50px";
-    logo.style.width = "50px";
-    logo.style.borderRadius = "10px";
+    logo.src = "https://cdn-icons-png.flaticon.com/512/4727/4727531.png";   // UPDATE if needed
+    logo.style.height = "40px";
+    logo.style.width = "40px";
+    logo.style.borderRadius = "6px";
+
+    // Title+Description vertical column
+    const textBox = document.createElement('div');
+    textBox.style.display = "flex";
+    textBox.style.flexDirection = "column";
+    textBox.style.lineHeight = "1.1";
 
     // TITLE
     const title = document.createElement('div');
     title.innerHTML = "SmartAppOptionTrading";
     title.style.color = "white";
-    title.style.fontSize = "19px";
+    title.style.fontSize = "18px";
     title.style.fontWeight = "700";
 
-    // DESCRIPTION (below title)
+    // DESCRIPTION
     const desc = document.createElement('div');
     desc.innerHTML = "AI-Powered Options Trading Intelligence";
     desc.style.color = "white";
     desc.style.fontSize = "12px";
-    desc.style.marginLeft = "52px";     // align under text, not under logo
     desc.style.opacity = "0.9";
+    desc.style.marginTop = "2px";
 
-    // Build the structure
-    row.appendChild(logo);
-    row.appendChild(title);
+    // Add elements together
+    textBox.appendChild(title);
+    textBox.appendChild(desc);
 
-    container.appendChild(row);
-    container.appendChild(desc);
-
+    container.appendChild(logo);
+    container.appendChild(textBox);
     header.appendChild(container);
 }
 
-// Inject title AFTER Streamlit builds the header
 setTimeout(injectHeaderContent, 200);
 </script>
 """, height=0)
+
 
 
 # -------------------------------------------------------
