@@ -16,49 +16,6 @@ st.set_page_config(page_title="Smart Option Selling", layout="wide")
 st.title("SmartAppOptionTrading")
 
 # -------------------------------------------------------
-# HIDE ENTIRE STREAMLIT HEADER (VERSION 1.51.0)
-# -------------------------------------------------------
-hide_full_header_151 = """
-<style>
-
-    # /* Completely hide the ENTIRE Streamlit header */
-    # header[data-testid="stHeader"] {
-    #     display: none !important;
-    #     visibility: hidden !important;
-    #     height: 0 !important;
-    #     position: fixed !important;
-    #     top: -100px !important;
-    # }
-
-    # /* Hide all top toolbars (new Streamlit 1.51.0 structure) */
-    # div[data-testid="stAppHeader"] {
-    #     display: none !important;
-    #     visibility: hidden !important;
-    # }
-
-    # div[data-testid="stAppHeaderActions"] {
-    #     display: none !important;
-    #     visibility: hidden !important;
-    # }
-
-    # /* Hide 3-dot menu popover if it somehow renders */
-    # div[data-testid="stActionMenuPopover"] {
-    #     display: none !important;
-    # }
-
-    # /* Push content down slightly to avoid overlap */
-    # .block-container {
-    #     padding-top: 20px !important;
-    # }
-
-</style>
-"""
-
-st.markdown(hide_full_header_151, unsafe_allow_html=True)
-
-
-
-# -------------------------------------------------------
 # CUSTOM FIXED HEADER
 # -------------------------------------------------------
 custom_fixed_header = """
