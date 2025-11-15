@@ -106,7 +106,7 @@ function injectHeaderContent() {
     title.style.color = "white";
     title.style.fontSize = "19px";
     title.style.fontWeight = "700";
-    title.style.marginTop = "42px";
+    title.style.marginTop = "1px";
 
     // DESCRIPTION (below title)
     const desc = document.createElement('div');
