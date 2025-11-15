@@ -13,26 +13,36 @@ from modules.ai_trade_levels import ai_trade_levels
 from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 
 st.set_page_config(page_title="Smart Option Selling", layout="wide")
+st.title("SmartAppOptionTrading")
+
 # -------------------------------------------------------
-# REMOVE STREAMLIT DEFAULT HEADER COMPLETELY
+# REMOVE ENTIRE STREAMLIT DEFAULT HEADER
 # -------------------------------------------------------
 remove_streamlit_header = """
 <style>
-/* Remove entire Streamlit default header (Share, GitHub, 3-dots, etc.) */
+/* Remove the whole Streamlit header including Share, GitHub, 3-dot menu */
 div[data-testid="stHeader"] {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0px !important;
+    position: fixed !important;
+    top: -100px !important;
+}
+
+/* Also remove any floating menu popovers */
+div[data-testid="stActionMenuPopover"] {
     display: none !important;
     visibility: hidden !important;
 }
 
-/* Push content down so it does not overlap */
+/* Push content down for spacing */
 .block-container {
-    padding-top: 90px !important;
+    padding-top: 70px !important;
 }
 </style>
 """
 st.markdown(remove_streamlit_header, unsafe_allow_html=True)
 
-st.title("SmartAppOptionTrading")
 
 # -------------------------------------------------------
 # CUSTOM FIXED HEADER
