@@ -15,6 +15,37 @@ from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 st.set_page_config(page_title="Smart Option Selling", layout="wide")
 st.title("SmartAppOptionTrading")
 
+custom_css = """
+<style>
+/* Hide all default right header actions */
+div[data-testid="stHeaderActions"],
+div[data-testid="stToolbarActions"],
+button[data-testid="baseButton-header"]:not([aria-label="Toggle sidebar"]) {
+    display: none !important;
+}
+
+/* Add your own right-side content */
+.custom-right {
+    position: absolute;
+    right: 20px;
+    top: 12px;
+    color: white;
+    font-weight:600;
+}
+
+/* Style header background */
+header[data-testid="stHeader"] {
+    background-color:#2c6bed !important;
+}
+</style>
+
+<div class="custom-right">
+    Logged in as: <b>User</b>
+</div>
+"""
+st.markdown(custom_css, unsafe_allow_html=True)
+
+
 # ----------------------------------------------------------------
 # Sidebar Configuration
 # ----------------------------------------------------------------
