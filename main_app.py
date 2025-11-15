@@ -81,7 +81,7 @@ function injectHeaderContent() {
     container.className = 'smartapp-container';
     container.style.position = "absolute";
     container.style.left = "60px";        // right of sidebar toggle
-    container.style.top = "5px";
+    container.style.top = "500px";
     container.style.display = "flex";
     container.style.flexDirection = "column";
     container.style.gap = "2px";
@@ -96,7 +96,7 @@ function injectHeaderContent() {
     // LOGO
     const logo = document.createElement('img');
     logo.src = "https://cdn-icons-png.flaticon.com/512/4727/4727531.png";  // <-- CHANGE PATH IF NEEDED
-    logo.style.height = "30px";
+    logo.style.height = "50px";
     logo.style.width = "50px";
     logo.style.borderRadius = "10px";
 
