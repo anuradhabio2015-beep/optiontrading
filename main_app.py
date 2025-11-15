@@ -37,6 +37,25 @@ header[data-testid="stHeader"] {
 .block-container {
     padding-top: 80px !important;
 }
+ /* Footer styling */
+    .custom-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #2E7CE0;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+        z-index: 9999;
+    }
+
+    /* Push content downward so header doesn't overlap */
+    .block-container {
+        padding-top: 80px !important;
+    }
+    
 </style>
 
 <script>
@@ -74,7 +93,6 @@ setTimeout(injectTitle, 200);
 """
 
 st.markdown(custom_css, unsafe_allow_html=True)
-
 
 
 # -------------------------------------------------------
