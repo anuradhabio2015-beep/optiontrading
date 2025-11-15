@@ -13,16 +13,20 @@ from modules.ai_trade_levels import ai_trade_levels
 from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 
 import streamlit as st
+import streamlit.components.v1 as components
 
+# -------------------------------------------------------
+# CSS — HIDE RIGHT HEADER ACTIONS + STYLE HEADER
+# -------------------------------------------------------
 custom_css = """
 <style>
-/* Hide all right header icons */
+/* Hide right-side actions */
 div[data-testid="stHeaderActions"],
 div[data-testid="stToolbarActions"] {
     display: none !important;
 }
 
-/* Hide all header buttons EXCEPT sidebar toggle */
+/* Hide all header buttons except sidebar toggle */
 header button[data-testid="baseButton-header"]:not([aria-label="Toggle sidebar"]) {
     display: none !important;
 }
@@ -33,66 +37,45 @@ header[data-testid="stHeader"] {
     height: 60px !important;
 }
 
-/* Push content so header doesn't overlap */
+/* Push page content down */
 .block-container {
     padding-top: 80px !important;
 }
- /* Footer styling */
-    .custom-footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background-color: #2E7CE0;
-        color: white;
-        text-align: center;
-        padding: 10px;
-        font-size: 14px;
-        z-index: 9999;
-    }
-
-    /* Push content downward so header doesn't overlap */
-    .block-container {
-        padding-top: 80px !important;
-    }
-    
 </style>
+"""
+st.markdown(custom_css, unsafe_allow_html=True)
 
+
+# -------------------------------------------------------
+# WORKING HEADER TEXT INJECTION (using components.html)
+# -------------------------------------------------------
+components.html("""
 <script>
-// Wait for the header to load
-function injectTitle() {
+function addSmartAppTitle() {
     const header = window.parent.document.querySelector('header[data-testid="stHeader"]');
     if (!header) {
-        setTimeout(injectTitle, 100);
+        setTimeout(addSmartAppTitle, 100);
         return;
     }
 
-    // Avoid duplicate insertion
-    if (header.querySelector('.smartapp-title')) return;
-
-    // Create title element
-    const title = document.createElement('div');
-    title.className = 'smartapp-title';
-    title.innerHTML = "SmartApp";
-
-    // Style title
-    title.style.position = "absolute";
-    title.style.left = "60px";  // next to sidebar toggle
-    title.style.top = "15px";
-    title.style.color = "white";
-    title.style.fontSize = "20px";
-    title.style.fontWeight = "700";
-    title.style.zIndex = "9999";
-
-    header.appendChild(title);
+    if (!header.querySelector('.smartapp-title')) {
+        const div = document.createElement('div');
+        div.className = 'smartapp-title';
+        div.innerHTML = "SmartApp";
+        div.style.position = "absolute";
+        div.style.left = "60px";     // avoid sidebar toggle
+        div.style.top = "15px";
+        div.style.color = "white";
+        div.style.fontSize = "20px";
+        div.style.fontWeight = "700";
+        div.style.zIndex = "9999";
+        header.appendChild(div);
+    }
 }
 
-// Inject title AFTER Streamlit builds the header
-setTimeout(injectTitle, 200);
+setTimeout(addSmartAppTitle, 200);
 </script>
-"""
-
-st.markdown(custom_css, unsafe_allow_html=True)
+""", height=0)
 
 
 # -------------------------------------------------------
@@ -103,8 +86,6 @@ st.markdown("""
     © 2025 SmartAppOptionTrading • Powered by AI & Market Intelligence
 </div>
 """, unsafe_allow_html=True)
-
-
 
 
 # ----------------------------------------------------------------
