@@ -15,33 +15,31 @@ from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 st.set_page_config(page_title="Smart Option Selling", layout="wide")
 st.title("SmartAppOptionTrading")
 
-# -------------------------------------------------------
-# REMOVE ENTIRE STREAMLIT DEFAULT HEADER
-# -------------------------------------------------------
-remove_streamlit_header = """
+hide_toolbar_151 = """
 <style>
-/* Remove the whole Streamlit header including Share, GitHub, 3-dot menu */
-div[data-testid="stHeader"] {
+/* Hide ONLY the right side toolbar (Share, Star, GitHub, ⋮ menu, all icons) */
+header div[data-testid="stAppHeaderActions"] {
     display: none !important;
     visibility: hidden !important;
-    height: 0px !important;
-    position: fixed !important;
-    top: -100px !important;
 }
 
-/* Also remove any floating menu popovers */
+/* Hide the dropdown menu if already open */
 div[data-testid="stActionMenuPopover"] {
     display: none !important;
     visibility: hidden !important;
 }
 
-/* Push content down for spacing */
-.block-container {
-    padding-top: 70px !important;
+/* KEEP sidebar toggle button working */
+button[data-testid="baseButton-header"][aria-label="Toggle sidebar"] {
+    display: flex !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
 }
 </style>
 """
-st.markdown(remove_streamlit_header, unsafe_allow_html=True)
+
+st.markdown(hide_toolbar_151, unsafe_allow_html=True)
+
 
 
 # -------------------------------------------------------
