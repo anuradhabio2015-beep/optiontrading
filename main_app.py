@@ -96,7 +96,7 @@ function injectHeaderContent() {
     // LOGO
     const logo = document.createElement('img');
     logo.src = "https://cdn-icons-png.flaticon.com/512/4727/4727531.png";  // <-- CHANGE PATH IF NEEDED
-    logo.style.height = "50px";
+    logo.style.height = "30px";
     logo.style.width = "50px";
     logo.style.borderRadius = "10px";
 
@@ -112,7 +112,7 @@ function injectHeaderContent() {
     desc.innerHTML = "AI-Powered Options Trading Intelligence";
     desc.style.color = "white";
     desc.style.fontSize = "12px";
-    desc.style.marginLeft = "62px";     // align under text, not under logo
+    desc.style.marginLeft = "52px";     // align under text, not under logo
     desc.style.opacity = "0.9";
 
     // Build the structure
