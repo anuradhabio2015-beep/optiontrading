@@ -38,7 +38,6 @@ custom_css = """
     /* Style the Streamlit header background */
     header[data-testid="stHeader"] {
         background-color: #2c6bed !important;
-        <div class="custom-left-title">SmartAppOptionTrading</div>
         height: 60px !important;
         padding-left: 20px !important;
     }
@@ -77,8 +76,6 @@ custom_css = """
 
 <!-- Inject custom header elements -->
 <div class="custom-left-title">SmartAppOptionTrading</div>
-<div class="custom-right-header">Logged in as: <b>Rahul</b></div>
-
 """
 
 st.markdown(custom_css, unsafe_allow_html=True)
