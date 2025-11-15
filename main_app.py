@@ -37,31 +37,9 @@ custom_css = """
 
     /* Style the Streamlit header background */
     header[data-testid="stHeader"] {
-        background-color: #2c6bed !important;
+        background-color: #2E7CE0 !important;
         height: 60px !important;
         padding-left: 20px !important;
-    }
-
-  /* ADD CUSTOM TEXT "SmartApp" ON LEFT SIDE OF HEADER */
-    .custom-left-header {
-        position: absolute;
-        left: 60px;        /* keeps clear of sidebar toggle */
-        top: 13px;
-        color: white;
-        font-size: 20px;
-        font-weight: 700;
-        z-index: 9999;
-    }
-
-    /* ADD CUSTOM TEXT ON RIGHT SIDE */
-    .custom-right-header {
-        position: absolute;
-        right: 25px;
-        top: 16px;
-        color: white;
-        font-size: 15px;
-        font-weight: 600;
-        z-index: 9999;
     }
 
     /* Footer styling */
@@ -70,7 +48,7 @@ custom_css = """
         bottom: 0;
         left: 0;
         width: 100%;
-        background-color: #2c6bed;
+        background-color: #2E7CE0;
         color: white;
         text-align: center;
         padding: 10px;
@@ -98,7 +76,7 @@ st.markdown(custom_css, unsafe_allow_html=True)
 # -------------------------------------------------------
 st.markdown("""
 <div class='custom-footer'>
-    © 2025 SmartApp | Powered by Python + Streamlit
+    © 2025 SmartAppOptionTrading • Powered by AI & Market Intelligence
 </div>
 """, unsafe_allow_html=True)
 
