@@ -91,7 +91,7 @@ function injectHeaderContent() {
     const row = document.createElement('div');
     row.style.display = "flex";
     row.style.alignItems = "center";
-    row.style.gap = "10px";
+    row.style.gap = "5px";
 
     // LOGO
     const logo = document.createElement('img');
@@ -106,14 +106,13 @@ function injectHeaderContent() {
     title.style.color = "white";
     title.style.fontSize = "19px";
     title.style.fontWeight = "700";
-    title.style.marginTop = "0px";
 
     // DESCRIPTION (below title)
     const desc = document.createElement('div');
     desc.innerHTML = "AI-Powered Options Trading Intelligence";
     desc.style.color = "white";
     desc.style.fontSize = "12px";
-    desc.style.marginLeft = "52px";     // align under text, not under logo
+    desc.style.marginLeft = "62px";     // align under text, not under logo
     desc.style.opacity = "0.9";
 
     // Build the structure
