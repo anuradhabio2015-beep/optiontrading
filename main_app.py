@@ -76,7 +76,15 @@ custom_css = """
 <div class="custom-left-title">SmartAppOptionTrading</div>
 """
 
-st.markdown(custom_css, unsafe_allow_html=True)
+# st.markdown(custom_css, unsafe_allow_html=True)
+# -------------------------------------------------------
+# CUSTOM HEADER
+# -------------------------------------------------------
+st.markdown("""
+<div class='custom-right-header'>
+    © 2025 SmartApp | Powered by Python + Streamlit
+</div>
+""", unsafe_allow_html=True)
 
 
 # -------------------------------------------------------
@@ -88,14 +96,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# -------------------------------------------------------
-# CUSTOM HEADER
-# -------------------------------------------------------
-st.markdown("""
-<div class='custom-right-header'>
-    © 2025 SmartApp | Powered by Python + Streamlit
-</div>
-""", unsafe_allow_html=True)
+
 
 
 # ----------------------------------------------------------------
