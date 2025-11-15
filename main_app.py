@@ -13,66 +13,55 @@ from modules.ai_trade_levels import ai_trade_levels
 from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 
 st.set_page_config(page_title="Smart Option Selling", layout="wide")
+# -------------------------------------------------------
+# REMOVE STREAMLIT DEFAULT HEADER COMPLETELY
+# -------------------------------------------------------
+remove_streamlit_header = """
+<style>
+/* Remove entire Streamlit default header (Share, GitHub, 3-dots, etc.) */
+div[data-testid="stHeader"] {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* Push content down so it does not overlap */
+.block-container {
+    padding-top: 90px !important;
+}
+</style>
+"""
+st.markdown(remove_streamlit_header, unsafe_allow_html=True)
+
 st.title("SmartAppOptionTrading")
 
 # -------------------------------------------------------
-# CUSTOM FIXED HEADER + DISABLE RIGHT MENU
+# CUSTOM FIXED HEADER
 # -------------------------------------------------------
-header_html = """
+custom_fixed_header = """
 <style>
-
-    /* FIXED CUSTOM HEADER */
-    .custom-header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 65px;
-        background-color: #2c6bed;
-        color: white;
-        display: flex;
-        align-items: center;
-        padding-left: 20px;
-        font-size: 22px;
-        font-weight: 700;
-        z-index: 9999;
-        box-shadow: 0px 2px 4px rgba(0,0,0,0.25);
-    }
-
-    /* Push content below header */
-    .block-container {
-        padding-top: 85px !important;
-    }
-
-    /* KEEP sidebar toggle button visible */
-    button[data-testid="baseButton-header"][aria-label="Toggle sidebar"] {
-        display: inline-flex !important;
-        visibility: visible !important;
-        pointer-events: auto !important;
-    }
-
-    /* HIDE all other header buttons (Share, GitHub, Edit, ⋮ etc) */
-    header button[data-testid="baseButton-header"]:not([aria-label="Toggle sidebar"]) {
-        display: none !important;
-        visibility: hidden !important;
-        pointer-events: none !important;
-    }
-
-    /* Extra safety: hide any stray menu popovers */
-    div[data-testid="stActionMenuPopover"] {
-        display: none !important;
-        visibility: hidden !important;
-        pointer-events: none !important;
-    }
-
+.custom-app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 65px;
+    background-color: #2c6bed;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding-left: 25px;
+    font-size: 24px;
+    font-weight: 700;
+    z-index: 9999;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.25);
+}
 </style>
 
-<div class="custom-header">
+<div class="custom-app-header">
     SmartAppOptionTrading
 </div>
 """
-
-st.markdown(header_html, unsafe_allow_html=True)
+st.markdown(custom_fixed_header, unsafe_allow_html=True)
 
 
 # ----------------------------------------------------------------
