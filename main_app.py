@@ -12,7 +12,7 @@ from modules.backtester import run_detailed_backtest
 from modules.ai_trade_levels import ai_trade_levels
 from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 
-import streamlit as st
+
 import streamlit.components.v1 as components
 
 # -------------------------------------------------------
@@ -34,59 +34,101 @@ header button[data-testid="baseButton-header"]:not([aria-label="Toggle sidebar"]
 /* Style header background */
 header[data-testid="stHeader"] {
     background-color: #2c6bed !important;
-    height: 60px !important;
+    height: 70px !important;
 }
-/* Footer styling */
-    .custom-footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background-color: #2E7CE0;
-        color: white;
-        text-align: center;
-        padding: 10px;
-        font-size: 14px;
-        z-index: 9999;
-    }
 
 /* Push page content down */
 .block-container {
-    padding-top: 80px !important;
+    padding-top: 95px !important;
+}
+
+/* Footer styling */
+.custom-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2E7CE0;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+    z-index: 9999;
 }
 </style>
 """
+
 st.markdown(custom_css, unsafe_allow_html=True)
 
 
 # -------------------------------------------------------
-# WORKING HEADER TEXT INJECTION (using components.html)
+# INJECT LOGO + APP TITLE + DESCRIPTION INTO STREAMLIT HEADER
 # -------------------------------------------------------
 components.html("""
 <script>
-function addSmartAppTitle() {
+function injectHeaderContent() {
+
     const header = window.parent.document.querySelector('header[data-testid="stHeader"]');
+
     if (!header) {
-        setTimeout(addSmartAppTitle, 100);
+        setTimeout(injectHeaderContent, 100);
         return;
     }
 
-    if (!header.querySelector('.smartapp-title')) {
-        const div = document.createElement('div');
-        div.className = 'smartapp-title';
-        div.innerHTML = "SmartAppOptionTrading";
-        div.style.position = "absolute";
-        div.style.left = "60px";     // avoid sidebar toggle
-        div.style.top = "15px";
-        div.style.color = "white";
-        div.style.fontSize = "20px";
-        div.style.fontWeight = "700";
-        div.style.zIndex = "9999";
-        header.appendChild(div);
-    }
+    if (header.querySelector('.smartapp-container')) return;
+
+    // Container wrapper
+    const container = document.createElement('div');
+    container.className = 'smartapp-container';
+    container.style.position = "absolute";
+    container.style.left = "60px";        // right of sidebar toggle
+    container.style.top = "10px";
+    container.style.display = "flex";
+    container.style.flexDirection = "column";
+    container.style.gap = "2px";
+    container.style.zIndex = "9999";
+
+    // Row for logo + title
+    const row = document.createElement('div');
+    row.style.display = "flex";
+    row.style.alignItems = "center";
+    row.style.gap = "10px";
+
+    // LOGO
+    const logo = document.createElement('img');
+    # logo.src = "/app/logo.png";  // <-- CHANGE PATH IF NEEDED
+    logo.src = "https://placehold.co/64x64/png?text=Logo"
+    logo.style.height = "32px";
+    logo.style.width = "32px";
+    logo.style.borderRadius = "6px";
+
+    // TITLE
+    const title = document.createElement('div');
+    title.innerHTML = "SmartAppOptionTrading";
+    title.style.color = "white";
+    title.style.fontSize = "19px";
+    title.style.fontWeight = "700";
+
+    // DESCRIPTION (below title)
+    const desc = document.createElement('div');
+    desc.innerHTML = "AI-Powered Options Trading Intelligence";
+    desc.style.color = "white";
+    desc.style.fontSize = "12px";
+    desc.style.marginLeft = "42px";     // align under text, not under logo
+    desc.style.opacity = "0.9";
+
+    // Build the structure
+    row.appendChild(logo);
+    row.appendChild(title);
+
+    container.appendChild(row);
+    container.appendChild(desc);
+
+    header.appendChild(container);
 }
 
-setTimeout(addSmartAppTitle, 200);
+// Inject title AFTER Streamlit builds the header
+setTimeout(injectHeaderContent, 200);
 </script>
 """, height=0)
 
