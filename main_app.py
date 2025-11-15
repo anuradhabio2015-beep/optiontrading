@@ -15,36 +15,6 @@ from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 st.set_page_config(page_title="Smart Option Selling", layout="wide")
 st.title("SmartAppOptionTrading")
 
-# -------------------------------------------------------
-# CUSTOM FIXED HEADER
-# -------------------------------------------------------
-custom_fixed_header = """
-<style>
-.custom-app-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 65px;
-    background-color: #2c6bed;
-    color: white;
-    display: flex;
-    align-items: center;
-    padding-left: 25px;
-    font-size: 24px;
-    font-weight: 700;
-    z-index: 9999;
-    box-shadow: 0px 2px 6px rgba(0,0,0,0.25);
-}
-</style>
-
-<div class="custom-app-header">
-    SmartAppOptionTrading
-</div>
-"""
-st.markdown(custom_fixed_header, unsafe_allow_html=True)
-
-
 # ----------------------------------------------------------------
 # Sidebar Configuration
 # ----------------------------------------------------------------
@@ -241,32 +211,3 @@ with tab_summary:
     st.subheader("🧠 AI Summary & Insights")
     st.write(st.session_state["ai_summary"])
     st.caption("⚠️ Educational use only. Not financial advice.")
-
-
-# # -------------------------------------------------------
-# # FIXED CUSTOM FOOTER
-# # -------------------------------------------------------
-# footer_html = """
-# <style>
-#     .custom-footer {
-#         position: fixed;
-#         bottom: 0;
-#         left: 0;
-#         width: 100%;
-#         height: 40px;
-#         background-color: #2c6bed;
-#         color: white;
-#         text-align: center;
-#         font-size: 14px;
-#         padding-top: 10px;
-#         z-index: 9999;
-#     }
-# </style>
-
-# <div class="custom-footer">
-#     © 2025 SmartAppOptionTrading | Powered by Python + Streamlit
-# </div>
-# """
-
-# st.markdown(footer_html, unsafe_allow_html=True)
-
