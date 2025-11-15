@@ -22,13 +22,13 @@ hide_full_header_151 = """
 <style>
 
     /* Completely hide the ENTIRE Streamlit header */
-    header[data-testid="stHeader"] {
-        display: none !important;
-        visibility: hidden !important;
-        height: 0 !important;
-        position: fixed !important;
-        top: -100px !important;
-    }
+    # header[data-testid="stHeader"] {
+    #     display: none !important;
+    #     visibility: hidden !important;
+    #     height: 0 !important;
+    #     position: fixed !important;
+    #     top: -100px !important;
+    # }
 
     /* Hide all top toolbars (new Streamlit 1.51.0 structure) */
     div[data-testid="stAppHeader"] {
