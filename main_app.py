@@ -12,38 +12,90 @@ from modules.backtester import run_detailed_backtest
 from modules.ai_trade_levels import ai_trade_levels
 from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 
-st.set_page_config(page_title="Smart Option Selling", layout="wide")
-st.title("SmartAppOptionTrading")
+import streamlit as st
 
+# -------------------------------------------------------
+# REMOVE RIGHT HEADER ICONS BUT KEEP SIDEBAR TOGGLE
+# -------------------------------------------------------
 custom_css = """
 <style>
-/* Hide all default right header actions */
-div[data-testid="stHeaderActions"],
-div[data-testid="stToolbarActions"],
-button[data-testid="baseButton-header"]:not([aria-label="Toggle sidebar"]) {
-    display: none !important;
-}
 
-/* Add your own right-side content */
-.custom-right {
-    position: absolute;
-    right: 20px;
-    top: 12px;
-    color: white;
-    font-weight:600;
-}
+    /* Hide ALL right header icons */
+    div[data-testid="stHeaderActions"] {
+        display: none !important;
+    }
+    div[data-testid="stToolbarActions"] {
+        display: none !important;
+    }
 
-/* Style header background */
-header[data-testid="stHeader"] {
-    background-color:#2c6bed !important;
-}
+    /* Hide all header buttons EXCEPT sidebar toggle */
+    header button[data-testid="baseButton-header"]:not([aria-label="Toggle sidebar"]) {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+
+    /* Style the Streamlit header background */
+    header[data-testid="stHeader"] {
+        background-color: #2c6bed !important;
+        height: 60px !important;
+        padding-left: 20px !important;
+    }
+
+    /* ADD CUSTOM TEXT ON RIGHT SIDE */
+    .custom-right-header {
+        position: absolute;
+        right: 25px;
+        top: 16px;
+        color: white;
+        font-size: 15px;
+        font-weight: 600;
+        z-index: 9999;
+    }
+
+    /* Footer styling */
+    .custom-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #2c6bed;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+        z-index: 9999;
+    }
+
+    /* Push content downward so header doesn't overlap */
+    .block-container {
+        padding-top: 80px !important;
+    }
+
 </style>
 
-<div class="custom-right">
-    Logged in as: <b>User</b>
+<!-- Right Header Custom Content -->
+<div class="custom-right-header">
+    Logged in as: <b>Rahul</b>
 </div>
 """
+
 st.markdown(custom_css, unsafe_allow_html=True)
+
+# -------------------------------------------------------
+# PAGE CONTENT EXAMPLE
+# -------------------------------------------------------
+st.title("SmartAppOptionTrading")
+st.write("Your main content goes here...")
+
+# -------------------------------------------------------
+# CUSTOM FOOTER
+# -------------------------------------------------------
+st.markdown("""
+<div class='custom-footer'>
+    © 2025 SmartApp | Powered by Python + Streamlit
+</div>
+""", unsafe_allow_html=True)
 
 
 # ----------------------------------------------------------------
