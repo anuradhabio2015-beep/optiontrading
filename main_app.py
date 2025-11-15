@@ -38,7 +38,6 @@ custom_css = """
     /* Style the Streamlit header background */
     header[data-testid="stHeader"] {
         background-color: #2c6bed !important;
-        <div class="custom-left-title">SmartAppOptionTrading</div>;
         height: 60px !important;
         padding-left: 20px !important;
     }
@@ -52,8 +51,9 @@ custom_css = """
         font-size: 15px;
         font-weight: 600;
         z-index: 9999;
-        <div class="custom-left-title">SmartAppOptionTrading</div>;
     }
+
+<div class="custom-left-title">SmartAppOptionTrading</div>;
 
     /* Footer styling */
     .custom-footer {
