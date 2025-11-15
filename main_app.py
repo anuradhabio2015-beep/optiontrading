@@ -81,7 +81,7 @@ function injectHeaderContent() {
     container.className = 'smartapp-container';
     container.style.position = "absolute";
     container.style.left = "60px";        // right of sidebar toggle
-    container.style.top = "500px";
+    container.style.top = "2px";
     container.style.display = "flex";
     container.style.flexDirection = "column";
     container.style.gap = "2px";
