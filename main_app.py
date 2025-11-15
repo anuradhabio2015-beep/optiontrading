@@ -95,7 +95,7 @@ function injectHeaderContent() {
 
     // LOGO
     const logo = document.createElement('img');
-    logo.src = "/app/logo.png";  // <-- CHANGE PATH IF NEEDED
+    logo.src = "/logo.png";  // <-- CHANGE PATH IF NEEDED
     logo.style.height = "32px";
     logo.style.width = "32px";
     logo.style.borderRadius = "6px";
