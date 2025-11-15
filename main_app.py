@@ -95,7 +95,7 @@ function injectHeaderContent() {
 
     // LOGO
     const logo = document.createElement('img');
-    logo.src = "logo.png";  // <-- CHANGE PATH IF NEEDED
+    logo.src = "https://cdn-icons-png.flaticon.com/512/4727/4727531.png";  // <-- CHANGE PATH IF NEEDED
     logo.style.height = "32px";
     logo.style.width = "32px";
     logo.style.borderRadius = "6px";
