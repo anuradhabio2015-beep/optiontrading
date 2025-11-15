@@ -36,6 +36,19 @@ header[data-testid="stHeader"] {
     background-color: #2c6bed !important;
     height: 60px !important;
 }
+/* Footer styling */
+    .custom-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #2E7CE0;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+        z-index: 9999;
+    }
 
 /* Push page content down */
 .block-container {
