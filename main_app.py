@@ -81,7 +81,7 @@ function injectHeaderContent() {
     container.className = 'smartapp-container';
     container.style.position = "absolute";
     container.style.left = "60px";        // right of sidebar toggle
-    container.style.top = "10px";
+    container.style.top = "5px";
     container.style.display = "flex";
     container.style.flexDirection = "column";
     container.style.gap = "2px";
@@ -106,7 +106,7 @@ function injectHeaderContent() {
     title.style.color = "white";
     title.style.fontSize = "19px";
     title.style.fontWeight = "700";
-    title.style.marginTop = "1px";
+    title.style.marginTop = "0px";
 
     // DESCRIPTION (below title)
     const desc = document.createElement('div');
