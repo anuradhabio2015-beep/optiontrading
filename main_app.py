@@ -136,7 +136,7 @@ function remove3Dots() {
     /* Selectors for the 3-dot menu button */
     const menuSelectors = [
         'button[title="Menu"]',
-        'button[aria-label="Menu"]',
+        'button[data-testid="baseButton-header"]',
         'div[data-testid="stToolbarActions"] button',
         'header button[aria-haspopup="menu"]',
         'header button[aria-expanded]',
