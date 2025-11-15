@@ -130,36 +130,40 @@ setTimeout(injectHeaderContent, 200);
 
 components.html("""
 <script>
-function remove3Dots() {
+function removeThreeDotMenu() {
     const doc = window.parent.document;
 
-    /* Selectors for the 3-dot menu button */
-    const menuSelectors = [
-        'button[title="Menu"]',
-        'div[data-testid="stToolbar"]',
-        'div[data-testid="stToolbarActions"] button',
-        'header button[aria-haspopup="menu"]',
-        'header button[aria-expanded]',
-        'header button[role="button"] svg[aria-label="more"]',
-        'header div[role="button"]'
-    ];
+    // Find any button that contains a 3-dots SVG
+    const buttons = doc.querySelectorAll('div[data-testid="stToolbarActions"] button');
 
-    menuSelectors.forEach(sel => {
-        const buttons = doc.querySelectorAll(sel);
-        buttons.forEach(btn => {
+    buttons.forEach(btn => {
+        const svg = btn.querySelector('svg');
+        if (!svg) return;
+
+        // Case 1: aria-label contains "more" / "menu"
+        const aria = svg.getAttribute("aria-label") || "";
+        if (aria.toLowerCase().includes("more") || aria.toLowerCase().includes("menu")) {
             btn.style.display = "none";
             btn.style.visibility = "hidden";
             btn.style.pointerEvents = "none";
-        });
+        }
+
+        // Case 2: SVG has 3 vertical dots (circle elements)
+        const circles = svg.querySelectorAll("circle");
+        if (circles.length === 3) {
+            btn.style.display = "none";
+            btn.style.visibility = "hidden";
+            btn.style.pointerEvents = "none";
+        }
     });
 
-    /* Remove the menu popover if it appears */
+    // Also remove the popover if it appears
     const pop = doc.querySelector('div[data-testid="stActionMenuPopover"]');
     if (pop) pop.remove();
 }
 
-/* Run repeatedly because Streamlit re-renders header */
-setInterval(remove3Dots, 300);
+// Keep checking because Streamlit re-renders header
+setInterval(removeThreeDotMenu, 300);
 </script>
 """, height=0)
 
