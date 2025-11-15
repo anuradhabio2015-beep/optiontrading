@@ -82,7 +82,7 @@ st.markdown(custom_css, unsafe_allow_html=True)
 # -------------------------------------------------------
 st.markdown("""
 <div class='custom-right-header'>
-    TESterkdnfk
+    SmartAppOptionTrading
 </div>
 """, unsafe_allow_html=True)
 
