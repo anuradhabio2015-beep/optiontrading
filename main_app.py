@@ -98,7 +98,7 @@ function injectHeaderContent() {
     logo.src = "https://cdn-icons-png.flaticon.com/512/4727/4727531.png";  // <-- CHANGE PATH IF NEEDED
     logo.style.height = "50px";
     logo.style.width = "50px";
-    logo.style.borderRadius = "10px";
+    logo.style.borderRadius = "100px";
 
     // TITLE
     const title = document.createElement('div');
@@ -119,7 +119,7 @@ function injectHeaderContent() {
     row.appendChild(logo);
     row.appendChild(title);
 
-    # container.appendChild(row);
+    container.appendChild(row);
     container.appendChild(desc);
 
     header.appendChild(container);
