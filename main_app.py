@@ -30,11 +30,11 @@ hide_full_header_151 = """
         top: -100px !important;
     }
 
-    /* Hide all top toolbars (new Streamlit 1.51.0 structure) */
-    div[data-testid="stAppHeader"] {
-        display: none !important;
-        visibility: hidden !important;
-    }
+    # /* Hide all top toolbars (new Streamlit 1.51.0 structure) */
+    # div[data-testid="stAppHeader"] {
+    #     display: none !important;
+    #     visibility: hidden !important;
+    # }
 
     # div[data-testid="stAppHeaderActions"] {
     #     display: none !important;
