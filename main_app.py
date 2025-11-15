@@ -64,8 +64,7 @@ custom_css = """
 </style>
 
 <!-- Inject custom header labels -->
-<div class="custom-left-header">SmartApp</div>
-<div class="custom-right-header">Logged in as: <b>Rahul</b></div>
+<div class="custom-footer">SmartApp</div>
 """
 
 st.markdown(custom_css, unsafe_allow_html=True)
