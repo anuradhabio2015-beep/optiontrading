@@ -53,8 +53,6 @@ custom_css = """
         z-index: 9999;
     }
 
-<div class="custom-left-title">SmartAppOptionTrading</div>
-
     /* Footer styling */
     .custom-footer {
         position: fixed;
@@ -75,7 +73,7 @@ custom_css = """
     }
 
 </style>
-
+<div class="custom-left-title">SmartAppOptionTrading</div>
 """
 
 st.markdown(custom_css, unsafe_allow_html=True)
@@ -86,6 +84,15 @@ st.markdown(custom_css, unsafe_allow_html=True)
 # -------------------------------------------------------
 st.markdown("""
 <div class='custom-footer'>
+    © 2025 SmartApp | Powered by Python + Streamlit
+</div>
+""", unsafe_allow_html=True)
+
+# -------------------------------------------------------
+# CUSTOM HEADER
+# -------------------------------------------------------
+st.markdown("""
+<div class='custom-right-header'>
     © 2025 SmartApp | Powered by Python + Streamlit
 </div>
 """, unsafe_allow_html=True)
