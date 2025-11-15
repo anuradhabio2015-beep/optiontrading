@@ -42,6 +42,17 @@ custom_css = """
         padding-left: 20px !important;
     }
 
+  /* ADD CUSTOM TEXT "SmartApp" ON LEFT SIDE OF HEADER */
+    .custom-left-header {
+        position: absolute;
+        left: 60px;        /* keeps clear of sidebar toggle */
+        top: 13px;
+        color: white;
+        font-size: 20px;
+        font-weight: 700;
+        z-index: 9999;
+    }
+
     /* ADD CUSTOM TEXT ON RIGHT SIDE */
     .custom-right-header {
         position: absolute;
@@ -73,18 +84,13 @@ custom_css = """
     }
 
 </style>
-<div class="custom-left-title">SmartAppOptionTrading</div>
+
+<!-- Inject custom header labels -->
+<div class="custom-left-header">SmartApp</div>
+<div class="custom-right-header">Logged in as: <b>Rahul</b></div>
 """
 
 st.markdown(custom_css, unsafe_allow_html=True)
-# -------------------------------------------------------
-# CUSTOM HEADER
-# -------------------------------------------------------
-st.markdown("""
-<div class='custom-right-header'>
-    SmartAppOptionTrading
-</div>
-""", unsafe_allow_html=True)
 
 
 # -------------------------------------------------------
