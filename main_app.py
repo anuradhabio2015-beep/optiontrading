@@ -89,8 +89,8 @@ function injectHeaderContent() {
 
     // LOGO
     const logo = document.createElement('img');
-    # logo.src = "https://cdn-icons-png.flaticon.com/512/4727/4727531.png";   // UPDATE if needed
-    logo.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Stellantis.svg/2560px-Stellantis.svg.png";   // UPDATE if needed
+    logo.src = "https://cdn-icons-png.flaticon.com/512/4727/4727531.png";   // UPDATE if needed
+    # logo.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Stellantis.svg/2560px-Stellantis.svg.png";   // UPDATE if needed
     logo.style.height = "50px";
     logo.style.width = "50px";
     logo.style.borderRadius = "10px";
