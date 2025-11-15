@@ -23,8 +23,8 @@ hide_full_header_151 = """
 
     /* Completely hide the ENTIRE Streamlit header */
     header[data-testid="stHeader"] {
-        # display: none !important;
-        visibility: hidden !important;
+        display: none !important;
+        # visibility: hidden !important;
         height: 0 !important;
         position: fixed !important;
         top: -100px !important;
