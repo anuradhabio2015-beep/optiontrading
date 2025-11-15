@@ -273,30 +273,30 @@ with tab_summary:
     st.caption("⚠️ Educational use only. Not financial advice.")
 
 
-# -------------------------------------------------------
-# FIXED CUSTOM FOOTER
-# -------------------------------------------------------
-footer_html = """
-<style>
-    .custom-footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 40px;
-        background-color: #2c6bed;
-        color: white;
-        text-align: center;
-        font-size: 14px;
-        padding-top: 10px;
-        z-index: 9999;
-    }
-</style>
+# # -------------------------------------------------------
+# # FIXED CUSTOM FOOTER
+# # -------------------------------------------------------
+# footer_html = """
+# <style>
+#     .custom-footer {
+#         position: fixed;
+#         bottom: 0;
+#         left: 0;
+#         width: 100%;
+#         height: 40px;
+#         background-color: #2c6bed;
+#         color: white;
+#         text-align: center;
+#         font-size: 14px;
+#         padding-top: 10px;
+#         z-index: 9999;
+#     }
+# </style>
 
-<div class="custom-footer">
-    © 2025 SmartAppOptionTrading | Powered by Python + Streamlit
-</div>
-"""
+# <div class="custom-footer">
+#     © 2025 SmartAppOptionTrading | Powered by Python + Streamlit
+# </div>
+# """
 
-st.markdown(footer_html, unsafe_allow_html=True)
+# st.markdown(footer_html, unsafe_allow_html=True)
 
