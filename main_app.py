@@ -14,35 +14,30 @@ from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 
 import streamlit as st
 
-# -------------------------------------------------------
-# REMOVE RIGHT HEADER ICONS BUT KEEP SIDEBAR TOGGLE
-# -------------------------------------------------------
 custom_css = """
 <style>
+/* Hide all right header icons */
+div[data-testid="stHeaderActions"],
+div[data-testid="stToolbarActions"] {
+    display: none !important;
+}
 
-    /* Hide ALL right header icons */
-    div[data-testid="stHeaderActions"] {
-        display: none !important;
-    }
-    div[data-testid="stToolbarActions"] {
-        display: none !important;
-    }
+/* Hide all header buttons EXCEPT sidebar toggle */
+header button[data-testid="baseButton-header"]:not([aria-label="Toggle sidebar"]) {
+    display: none !important;
+}
 
-    /* Hide all header buttons EXCEPT sidebar toggle */
-    header button[data-testid="baseButton-header"]:not([aria-label="Toggle sidebar"]) {
-        display: none !important;
-        visibility: hidden !important;
-        pointer-events: none !important;
-    }
+/* Style header background */
+header[data-testid="stHeader"] {
+    background-color: #2c6bed !important;
+    height: 60px !important;
+}
 
-    /* Style the Streamlit header background */
-    header[data-testid="stHeader"] {
-        background-color: #2E7CE0 !important;
-        height: 60px !important;
-        padding-left: 20px !important;
-    }
-
-    /* Footer styling */
+/* Push content so header doesn't overlap */
+.block-container {
+    padding-top: 80px !important;
+}
+ /* Footer styling */
     .custom-footer {
         position: fixed;
         bottom: 0;
@@ -60,11 +55,41 @@ custom_css = """
     .block-container {
         padding-top: 80px !important;
     }
-
+    
 </style>
 
-<!-- Inject custom header labels -->
-<div class="custom-footer">SmartApp</div>
+<script>
+// Wait for the header to load
+function injectTitle() {
+    const header = window.parent.document.querySelector('header[data-testid="stHeader"]');
+    if (!header) {
+        setTimeout(injectTitle, 100);
+        return;
+    }
+
+    // Avoid duplicate insertion
+    if (header.querySelector('.smartapp-title')) return;
+
+    // Create title element
+    const title = document.createElement('div');
+    title.className = 'smartapp-title';
+    title.innerHTML = "SmartApp";
+
+    // Style title
+    title.style.position = "absolute";
+    title.style.left = "60px";  // next to sidebar toggle
+    title.style.top = "15px";
+    title.style.color = "white";
+    title.style.fontSize = "20px";
+    title.style.fontWeight = "700";
+    title.style.zIndex = "9999";
+
+    header.appendChild(title);
+}
+
+// Inject title AFTER Streamlit builds the header
+setTimeout(injectTitle, 200);
+</script>
 """
 
 st.markdown(custom_css, unsafe_allow_html=True)
