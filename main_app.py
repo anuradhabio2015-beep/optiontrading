@@ -128,6 +128,40 @@ setTimeout(injectHeaderContent, 200);
 </script>
 """, height=0)
 
+components.html("""
+<script>
+function remove3Dots() {
+    const doc = window.parent.document;
+
+    /* Selectors for the 3-dot menu button */
+    const menuSelectors = [
+        'button[title="Menu"]',
+        'button[aria-label="Menu"]',
+        'div[data-testid="stToolbarActions"] button',
+        'header button[aria-haspopup="menu"]',
+        'header button[aria-expanded]',
+        'header button[role="button"] svg[aria-label="more"]',
+        'header div[role="button"]'
+    ];
+
+    menuSelectors.forEach(sel => {
+        const buttons = doc.querySelectorAll(sel);
+        buttons.forEach(btn => {
+            btn.style.display = "none";
+            btn.style.visibility = "hidden";
+            btn.style.pointerEvents = "none";
+        });
+    });
+
+    /* Remove the menu popover if it appears */
+    const pop = doc.querySelector('div[data-testid="stActionMenuPopover"]');
+    if (pop) pop.remove();
+}
+
+/* Run repeatedly because Streamlit re-renders header */
+setInterval(remove3Dots, 300);
+</script>
+""", height=0)
 
 
 # -------------------------------------------------------
@@ -138,6 +172,7 @@ st.markdown("""
     © 2025 SmartAppOptionTrading • Powered by AI & Market Intelligence
 </div>
 """, unsafe_allow_html=True)
+
 
 
 # ----------------------------------------------------------------
