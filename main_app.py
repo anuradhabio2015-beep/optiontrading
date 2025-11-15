@@ -38,6 +38,7 @@ custom_css = """
     /* Style the Streamlit header background */
     header[data-testid="stHeader"] {
         background-color: #2c6bed !important;
+        <div class="custom-left-title">SmartAppOptionTrading</div>
         height: 60px !important;
         padding-left: 20px !important;
     }
