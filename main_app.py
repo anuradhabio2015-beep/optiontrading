@@ -74,19 +74,14 @@ custom_css = """
 
 </style>
 
-<!-- Right Header Custom Content -->
-<div class="custom-right-header">
-    Logged in as: <b>Rahul</b>
-</div>
+<!-- Inject custom header elements -->
+<div class="custom-left-title">SmartAppOptionTrading</div>
+<div class="custom-right-header">Logged in as: <b>Rahul</b></div>
+
 """
 
 st.markdown(custom_css, unsafe_allow_html=True)
 
-# -------------------------------------------------------
-# PAGE CONTENT EXAMPLE
-# -------------------------------------------------------
-st.title("SmartAppOptionTrading")
-st.write("Your main content goes here...")
 
 # -------------------------------------------------------
 # CUSTOM FOOTER
