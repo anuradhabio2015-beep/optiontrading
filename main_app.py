@@ -16,10 +16,33 @@ st.set_page_config(page_title="Smart Option Selling", layout="wide")
 st.title("SmartAppOptionTrading")
 
 # -------------------------------------------------------
-# REMOVE STREAMLIT DEFAULT HEADER/FOOTER
+# CUSTOM FIXED HEADER + DISABLE RIGHT MENU
 # -------------------------------------------------------
-hide_all_right_icons = """
+header_html = """
 <style>
+
+    /* FIXED CUSTOM HEADER */
+    .custom-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 65px;
+        background-color: #2c6bed;
+        color: white;
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+        font-size: 22px;
+        font-weight: 700;
+        z-index: 9999;
+        box-shadow: 0px 2px 4px rgba(0,0,0,0.25);
+    }
+
+    /* Push content below header */
+    .block-container {
+        padding-top: 85px !important;
+    }
 
     /* KEEP sidebar toggle button visible */
     button[data-testid="baseButton-header"][aria-label="Toggle sidebar"] {
@@ -28,33 +51,28 @@ hide_all_right_icons = """
         pointer-events: auto !important;
     }
 
-    /* HIDE all other header buttons on the right */
+    /* HIDE all other header buttons (Share, GitHub, Edit, ⋮ etc) */
     header button[data-testid="baseButton-header"]:not([aria-label="Toggle sidebar"]) {
         display: none !important;
         visibility: hidden !important;
         pointer-events: none !important;
     }
 
-    /* HIDE the Share section (text + icon) */
-    div[data-testid="stHeaderActionShare"] {
-        display: none !important;
-    }
-
-    /* HIDE all individual header actions group */
-    div[data-testid="stHeaderActions"] {
-        display: none !important;
-    }
-
-    /* HIDE the 3-dot action menu if it appears */
+    /* Extra safety: hide any stray menu popovers */
     div[data-testid="stActionMenuPopover"] {
         display: none !important;
         visibility: hidden !important;
+        pointer-events: none !important;
     }
 
 </style>
-"""
-st.markdown(hide_all_right_icons, unsafe_allow_html=True)
 
+<div class="custom-header">
+    SmartAppOptionTrading
+</div>
+"""
+
+st.markdown(header_html, unsafe_allow_html=True)
 
 
 # ----------------------------------------------------------------
@@ -253,3 +271,32 @@ with tab_summary:
     st.subheader("🧠 AI Summary & Insights")
     st.write(st.session_state["ai_summary"])
     st.caption("⚠️ Educational use only. Not financial advice.")
+
+
+# -------------------------------------------------------
+# FIXED CUSTOM FOOTER
+# -------------------------------------------------------
+footer_html = """
+<style>
+    .custom-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 40px;
+        background-color: #2c6bed;
+        color: white;
+        text-align: center;
+        font-size: 14px;
+        padding-top: 10px;
+        z-index: 9999;
+    }
+</style>
+
+<div class="custom-footer">
+    © 2025 SmartAppOptionTrading | Powered by Python + Streamlit
+</div>
+"""
+
+st.markdown(footer_html, unsafe_allow_html=True)
+
