@@ -12,7 +12,6 @@ from modules.backtester import run_detailed_backtest
 from modules.ai_trade_levels import ai_trade_levels
 from modules.charts import plot_iv_rank_history, plot_expected_move_chart
 
-
 import streamlit.components.v1 as components
 
 # -------------------------------------------------------
@@ -96,8 +95,7 @@ function injectHeaderContent() {
 
     // LOGO
     const logo = document.createElement('img');
-    # logo.src = "/logo.png";  // <-- CHANGE PATH IF NEEDED
-    logo.src = "https://placehold.co/64x64/png?text=Logo"
+    logo.src = "/app/logo.png";  // <-- CHANGE PATH IF NEEDED
     logo.style.height = "32px";
     logo.style.width = "32px";
     logo.style.borderRadius = "6px";
