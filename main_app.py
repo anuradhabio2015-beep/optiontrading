@@ -91,7 +91,7 @@ function injectHeaderContent() {
     const row = document.createElement('div');
     row.style.display = "flex";
     row.style.alignItems = "center";
-    row.style.gap = "500px";
+    row.style.gap = "0px";
 
     // LOGO
     const logo = document.createElement('img');
