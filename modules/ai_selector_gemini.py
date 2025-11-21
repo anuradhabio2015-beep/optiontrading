@@ -4,7 +4,7 @@ from google.api_core import exceptions
 
 def _call_gemini(prompt):
     try:
-        model = genai.GenerativeModel("gemini-pro-latest")
+        model = genai.GenerativeModel("gemini-3-pro-preview")
         resp = model.generate_content(prompt)
         return resp.text
     except exceptions.ResourceExhausted:
